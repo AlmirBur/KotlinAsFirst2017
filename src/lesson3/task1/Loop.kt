@@ -19,7 +19,7 @@ fun factorial(n: Int): Double {
  *
  * Проверка числа на простоту -- результат true, если число простое
  */
-fun isPrime(n: Int): Boolean {
+fun isPrime(n: Int): Boolean { 
     if (n < 2) return false
     for (m in 2..Math.sqrt(n.toDouble()).toInt()) {
         if (n % m == 0) return false
@@ -27,7 +27,7 @@ fun isPrime(n: Int): Boolean {
     return true
 }
 
-/** 
+/**
  * Пример
  *
  * Проверка числа на совершенность -- результат true, если число совершенное
