@@ -1,5 +1,6 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson3.task1
+import lesson1.task1.quadraticRootProduct
 import java.lang.Math.*
 /**
  * Пример
@@ -62,7 +63,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var k: Int = 0
-    var num: Int = n
+    var num: Int = abs(n)
     do {
         num /= 10
         k ++
@@ -150,7 +151,8 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
+fun squareBetweenExists(m: Int, n: Int): Boolean =
+        sqrt(n.toDouble()).toInt() - sqrt(m.toDouble() - 0.1).toInt() - 1 >= 0
 
 /**
  * Средняя
@@ -159,7 +161,17 @@ fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
  * sin(x) = x - x^3 / 3! + x^5 / 5! - x^7 / 7! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+    val c = x % (PI * 2)
+    var z = c
+    var y = z
+    for (i in 1..1000) {
+        z = pow(-1.0, (i % 2).toDouble()) * pow(c, (i * 2 + 1).toDouble()) / factorial(i * 2 + 1)
+        y += z
+        if (abs(z) < eps) return y
+    }
+    return -1.0
+}
 
 /**
  * Средняя
@@ -168,7 +180,17 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * cos(x) = 1 - x^2 / 2! + x^4 / 4! - x^6 / 6! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    val c = x % (PI * 2)
+    var z = 1.0
+    var y = z
+    for (i in 1..1000) {
+        z = pow(-1.0, (i % 2).toDouble()) * pow(c, (i * 2).toDouble()) / factorial(i * 2)
+        y += z
+        if (abs(z) < eps) return y
+    }
+    return -1.0
+}
 
 /**
  * Средняя
