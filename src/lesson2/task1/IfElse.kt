@@ -56,10 +56,10 @@ fun ageDescription(age: Int): String{
 fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
                    t3: Double, v3: Double): Double {
-    val s1: Double = t1 * v1
-    val s2: Double = t2 * v2
-    val s3: Double = t3 * v3
-    val halfS: Double = (s1 + s2 + s3) / 2.0
+    val s1 = t1 * v1
+    val s2 = t2 * v2
+    val s3 = t3 * v3
+    val halfS = (s1 + s2 + s3) / 2.0
     return if (s1 >= halfS) halfS / v1
     else
         if (s1 + s2 >= halfS) t1 + (halfS - s1) / v2
@@ -78,10 +78,10 @@ fun timeForHalfWay(t1: Double, v1: Double,
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
                        rookX2: Int, rookY2: Int): Int {
-    var d = 0
-    if ((rookX1 == kingX) || (rookY1 == kingY))  d = 1
-    if ((rookX2 == kingX) || (rookY2 == kingY))  d += 2
-    return d
+    var logicalSum = 0
+    if ((rookX1 == kingX) || (rookY1 == kingY))  logicalSum = 1
+    if ((rookX2 == kingX) || (rookY2 == kingY))  logicalSum += 2
+    return logicalSum
 }
 
 /**

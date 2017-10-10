@@ -66,9 +66,8 @@ fun digitNumber(n: Int): Int {
     var num: Int = abs(n)
     do {
         num /= 10
-        k ++
-    }
-    while (num > 0)
+        k++
+    } while (num > 0)
     return k
 }
 
@@ -79,17 +78,21 @@ fun digitNumber(n: Int): Int {
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int {
-    if (n < 3) return 1
-    var f1 = 1
-    var f2 = 1
-    var x: Int
-    for (i in 3..n) {
-        x = f1 //1
-        f1 = f2 //1
-        f2 += x //2
-    }
-    return f2
+    val a = 1.0 / 2.0
+    val b = sqrt(5.0) / 2.0
+    return ((pow(a + b, n.toDouble()) - pow(a - b, n.toDouble())) / sqrt(5.0)).toInt()
 }
+
+/* if (n < 3) return 1
+var f1 = 1
+var f2 = 1
+var x: Int
+for (i in 4..n) {
+    f2 += f1
+    f1 = f2 - f1
+}
+return f1 + f2
+*/
 
 /*
     return when{
@@ -166,13 +169,13 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun sin(x: Double, eps: Double): Double {
-    val c = x % (PI * 2)
-    var z = c
-    var y = z
+    val newX = x % (PI * 2)
+    var division = newX
+    var result = division
     for (i in 1..1000) {
-        z = pow(-1.0, (i % 2).toDouble()) * pow(c, (i * 2 + 1).toDouble()) / factorial(i * 2 + 1)
-        y += z
-        if (abs(z) < eps) return y
+        division = pow(-1.0, (i % 2).toDouble()) * pow(newX, (i * 2 + 1).toDouble()) / factorial(i * 2 + 1)
+        result += division
+        if (abs(division) < eps) return result
     }
     return -1.0
 }
@@ -185,13 +188,13 @@ fun sin(x: Double, eps: Double): Double {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun cos(x: Double, eps: Double): Double {
-    val c = x % (PI * 2)
-    var z = 1.0
-    var y = z
+    val newX = x % (PI * 2)
+    var division = 1.0
+    var result = division
     for (i in 1..1000) {
-        z = pow(-1.0, (i % 2).toDouble()) * pow(c, (i * 2).toDouble()) / factorial(i * 2)
-        y += z
-        if (abs(z) < eps) return y
+        division = pow(-1.0, (i % 2).toDouble()) * pow(newX, (i * 2).toDouble()) / factorial(i * 2)
+        result += division
+        if (abs(division) < eps) return result
     }
     return -1.0
 }
@@ -249,7 +252,8 @@ fun squareSequenceDigit(n: Int): Int {
     var k = 0
     for (i in 1..n) {
         k += digitNumber(i * i)
-        if (k >= n) return i * i % pow(10.0, (k - n + 1).toDouble()).toInt() / pow(10.0, (k - n).toDouble()).toInt()
+        if (k >= n)
+            return i * i % pow(10.0, (k - n + 1).toDouble()).toInt() / pow(10.0, (k - n).toDouble()).toInt()
     }
     return -1
 }
@@ -265,7 +269,8 @@ fun fibSequenceDigit(n: Int): Int {
     var k = 0
     for (i in 1..n) {
         k += digitNumber(fib(i))
-        if (k >= n) return fib(i) % pow(10.0, (k - n + 1).toDouble()).toInt() / pow(10.0, (k - n).toDouble()).toInt()
+        if (k >= n)
+            return fib(i) % pow(10.0, (k - n + 1).toDouble()).toInt() / pow(10.0, (k - n).toDouble()).toInt()
     }
     return -1
 }
