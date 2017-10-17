@@ -107,10 +107,24 @@ return f1 + f2
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int {
+
+fun nod(m: Int, n: Int): Int {
+    var newM = m
+    var newN = n
+    while (max(newM, newN) % min(newM, newN) != 0) {
+        if (newM > newN) newM %= newN
+        else newN %= newM
+    }
+    return min(newM, newN)
+}
+
+fun lcm(m: Int, n: Int): Int = m * n / nod(m, n)
+
+/* fun lcm(m: Int, n: Int): Int { /** HOK = m * n / HOD(m, n) <-по алгю евклида8*/
     for (i in max(m, n)..m * n) if (i % m == 0 && i % n == 0) return i
     return -1
 }
+*/
 
 /**
  * Простая
@@ -155,11 +169,9 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
-
-    for (i in m..n) if (sqrt(i.toDouble()) % 1 == 0.0) return true
-    return false
+    return if (m == 0) true
+    else sqrt(n.toDouble()).toInt() - sqrt(m.toDouble() - 0.1).toInt() - 1 >= 0
 }
-        //sqrt(n.toDouble()).toInt() - sqrt(m.toDouble() - 0.1).toInt() - 1 >= 0
 
 /**
  * Средняя
