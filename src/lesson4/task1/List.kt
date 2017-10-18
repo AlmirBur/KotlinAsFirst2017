@@ -4,6 +4,7 @@ package lesson4.task1
 import java.lang.Math.*
 import lesson1.task1.discriminant
 import lesson3.task1.minDivisor
+import lesson3.task1.digitNumber
 
 /**
  * Пример
@@ -231,7 +232,12 @@ fun convert(n: Int, base: Int): List<Int> {
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    val digitName = listOf<Char>('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+            'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')
+    val newN = convert(n, base).map { digitName[it] }
+    return newN.joinToString("")
+}
 
 /**
  * Средняя
@@ -240,7 +246,15 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int {
+    var degree = 1
+    var result = 0
+    for (i in digits.size - 1 downTo 0) {
+        result += digits[i] * degree
+        degree *= base
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -251,7 +265,19 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    val list = mutableListOf<Int>()
+    val digitName = listOf<Char>('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+            'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')
+    for (i in 0..str.length - 1) {
+        for (j in 0..36)
+            if (str[i] == digitName[j]) {
+                list.add(j)
+                break
+            }
+    }
+    return decimal(list, base)
+}
 
 /**
  * Сложная
@@ -261,7 +287,67 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    if (n > 3999) return "Число больше 3999"
+    val name = listOf(listOf("I", "V"), listOf("X", "L"), listOf("C", "D"), listOf("M"))
+    var newN = n
+    var mod: Int
+    var result = ""
+    for (i in 0..digitNumber(n) - 1) {
+        mod = newN % 10
+        if (mod == 0) {
+            newN /= 10
+            continue
+        }
+        when {
+            mod == 4 || mod == 9 -> result = name[i][0] + name[mod / 5 + i][(mod / 5 + 1) % 2] + result
+            else -> {
+                var temp = ""
+                for (j in 2..mod % 5 + mod / 5) temp += name[i][0]
+                result = name[i][mod / 5] + temp + result
+            }
+        }
+        newN /= 10
+    }
+    return result
+}
+
+/*
+fun roman (n: Int): String {
+    if (n > 3999) return "Число больше 3999"
+    val name = listOf(listOf("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"),
+                      listOf("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"),
+                      listOf("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"),
+                      listOf("", "M", "MM", "MMM"))
+    var newN = n
+    var mod = n % 10
+    var result = ""
+    for (i in 0..digitNumber(n) - 1) {
+        result = name[i][mod] + result
+        newN /= 10
+        mod = newN % 10
+    }
+    return result
+}
+*/
+
+fun thousand(n: Int): MutableList<String> {
+    val name = listOf(listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"),
+                      listOf("", "десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"),
+                      listOf("", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот"),
+                      listOf("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"))
+    var result = listOf<String>()
+    if (n % 100 in 11..19) result = result + name[2][n / 100] + name[3][n % 10]
+    else {
+        var newN = n
+        for (i in 0..2) {
+            result = listOf(name[i][newN % 10]) + result
+            newN /= 10
+        }
+    }
+    result = result.filter { it != "" }
+    return result.toMutableList()
+}
 
 /**
  * Очень сложная
@@ -270,4 +356,23 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+
+fun russian(n: Int): String {
+    var temp: MutableList<String>
+    var result = ""
+    for (i in 0..1) {
+        if (i == 0 && n / 1000 != 0) {
+            val name = listOf(listOf("одна", "две", "три", "четыре"), listOf("а", "и", "и", "и"))
+            val t = n / 1000 % 10
+            temp = thousand(n / 1000)
+            var extra = "тысяч"
+            if (n / 1000 % 100 !in 11..19 && t in 1..4) {
+                temp[temp.size - 1] = name[0][t - 1]
+                extra += name[1][t - 1]
+            }
+            result = temp.joinToString(" ", "", " ") + extra
+        }
+        else return (result + thousand(n % 1000).joinToString(" ", " ")).trim()
+    }
+    return "Ошибка"
+}
