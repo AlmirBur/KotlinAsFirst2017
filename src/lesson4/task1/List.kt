@@ -288,12 +288,12 @@ fun decimalFromString(str: String, base: Int): Int {
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 fun roman(n: Int): String {
-    if (n > 3999) return "Число больше 3999"
+    if (n > 39999) return "Число больше 3999"
     val name = listOf(listOf("I", "V"), listOf("X", "L"), listOf("C", "D"), listOf("M"))
     var newN = n
     var mod: Int
     var result = ""
-    for (i in 0..digitNumber(n) - 1) {
+    for (i in 0..2) {
         mod = newN % 10
         if (mod == 0) {
             newN /= 10
@@ -309,6 +309,7 @@ fun roman(n: Int): String {
         }
         newN /= 10
     }
+    for (i in 1..n / 1000) result = "M" + result
     return result
 }
 
@@ -360,8 +361,7 @@ fun thousand(n: Int): MutableList<String> {
 fun russian(n: Int): String {
     var temp: MutableList<String>
     var result = ""
-    for (i in 0..1) {
-        if (i == 0 && n / 1000 != 0) {
+        if (n / 1000 != 0) {
             val name = listOf(listOf("одна", "две", "три", "четыре"), listOf("а", "и", "и", "и"))
             val t = n / 1000 % 10
             temp = thousand(n / 1000)
@@ -372,7 +372,9 @@ fun russian(n: Int): String {
             }
             result = temp.joinToString(" ", "", " ") + extra
         }
-        else return (result + thousand(n % 1000).joinToString(" ", " ")).trim()
-    }
-    return "Ошибка"
+        return (result + thousand(n % 1000).joinToString(" ", " ")).trim()
+}
+
+fun main(args: Array<String>) {
+    println(roman(15378))
 }
