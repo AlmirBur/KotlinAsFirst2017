@@ -331,13 +331,14 @@ fun roman (n: Int): String {
 }
 */
 
-fun thousand(n: Int, extra: String): MutableList<String> {
+fun part(n: Int, extra: String): MutableList<String> {
     if (n == 0) return mutableListOf()
     val name = listOf(listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"),
                       listOf("", "десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"),
                       listOf("", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот"),
                       listOf("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"),
-                      listOf("", "одна тысяча", "две тысячи", "три тысячи", "четыре тысячи"))
+                      listOf("", "одна тысяча", "две тысячи", "три тысячи", "четыре тысячи"),
+            listOf("", "одна тысяча", "две тысячи", "три тысячи", "четыре тысячи"))
     var result = mutableListOf<String>()
     var newN = n
     var logic = true
@@ -369,8 +370,9 @@ fun thousand(n: Int, extra: String): MutableList<String> {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 
-fun russian(n: Int): String {
-    var result = thousand(n / 1000, "тысяч") + thousand(n % 1000, "")
-    result = result.filter { it != ""}
-    return result.joinToString(" ")
+fun russian(n: Int): String =
+        (part(n / 1000, "тысяч") + part(n % 1000, "")).filter { it != ""}.joinToString(" ")
+
+fun main(args: Array<String>) {
+    println(russian( 11100))
 }
