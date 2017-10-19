@@ -3,8 +3,7 @@ package lesson4.task1
 
 import java.lang.Math.*
 import lesson1.task1.discriminant
-import lesson3.task1.minDivisor
-import lesson3.task1.digitNumber
+import lesson3.task1.*
 
 /**
  * Пример
@@ -313,41 +312,53 @@ fun roman(n: Int): String {
     return result
 }
 
-/*
+/**
 fun roman (n: Int): String {
-    if (n > 3999) return "Число больше 3999"
     val name = listOf(listOf("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"),
                       listOf("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"),
                       listOf("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"),
-                      listOf("", "M", "MM", "MMM"))
+                      listOf("", "M"))
     var newN = n
     var mod = n % 10
     var result = ""
-    for (i in 0..digitNumber(n) - 1) {
+    for (i in 0..2) {
         result = name[i][mod] + result
         newN /= 10
         mod = newN % 10
     }
+    for (i in 1..n / 1000) result = "M" + result
     return result
 }
 */
 
-fun thousand(n: Int): MutableList<String> {
+fun thousand(n: Int, extra: String): MutableList<String> {
+    if (n == 0) return mutableListOf()
     val name = listOf(listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"),
                       listOf("", "десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"),
                       listOf("", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот"),
-                      listOf("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"))
-    var result = listOf<String>()
-    if (n % 100 in 11..19) result = result + name[2][n / 100] + name[3][n % 10]
-    else {
-        var newN = n
-        for (i in 0..2) {
-            result = listOf(name[i][newN % 10]) + result
-            newN /= 10
-        }
+                      listOf("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"),
+                      listOf("", "одна тысяча", "две тысячи", "три тысячи", "четыре тысячи"))
+    var result = mutableListOf<String>()
+    var newN = n
+    var logic = true
+    if (n % 100 in 11..19) {
+        result.add(name[2][n / 100])
+        result.add(name[3][n % 10])
+        result.add(extra)
+        return result
     }
-    result = result.filter { it != "" }
-    return result.toMutableList()
+    for (i in 0..2) {
+        if (i == 0 && extra != "" && n % 10 in  1..4) {
+            result.add(name[4][n % 10])
+            logic = false
+            newN /= 10
+            continue
+        }
+        result.add(0, name[i][newN % 10])
+        newN /= 10
+    }
+    if (logic == true) result.add(extra)
+    return result
 }
 
 /**
@@ -359,22 +370,7 @@ fun thousand(n: Int): MutableList<String> {
  */
 
 fun russian(n: Int): String {
-    var temp: MutableList<String>
-    var result = ""
-        if (n / 1000 != 0) {
-            val name = listOf(listOf("одна", "две", "три", "четыре"), listOf("а", "и", "и", "и"))
-            val t = n / 1000 % 10
-            temp = thousand(n / 1000)
-            var extra = "тысяч"
-            if (n / 1000 % 100 !in 11..19 && t in 1..4) {
-                temp[temp.size - 1] = name[0][t - 1]
-                extra += name[1][t - 1]
-            }
-            result = temp.joinToString(" ", "", " ") + extra
-        }
-        return (result + thousand(n % 1000).joinToString(" ", " ")).trim()
-}
-
-fun main(args: Array<String>) {
-    println(roman(15378))
+    var result = thousand(n / 1000, "тысяч") + thousand(n % 1000, "")
+    result = result.filter { it != ""}
+    return result.joinToString(" ")
 }
