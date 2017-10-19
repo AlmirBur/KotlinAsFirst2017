@@ -331,13 +331,49 @@ fun roman (n: Int): String {
 }
 */
 
-fun part(n: Int, extra: String): MutableList<String> {
+/**
+fun part(n: Int, id: Int): MutableList<String> {
     if (n == 0) return mutableListOf()
+    val extra = listOf("", "тысяч", "миллионов", "миллиардов", "триллионов")
     val name = listOf(listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"),
                       listOf("", "десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"),
                       listOf("", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот"),
                       listOf("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"),
                       listOf("", "одна тысяча", "две тысячи", "три тысячи", "четыре тысячи"),
+                      listOf("", "один миллион", "два миллиона", "три миллиона", "четыре миллиона"),
+                      listOf("", "один миллиард", "два миллиарда", "три миллиарда", "четыре миллиарда"),
+                      listOf("", "один триллион", "два триллиона", "три триллиона", "четыре триллиона"))
+    var result = mutableListOf<String>()
+    var newN = n
+    var logic = true
+    if (n % 100 in 11..19) {
+        result.add(name[2][n / 100])
+        result.add(name[3][n % 10])
+        result.add(extra[id])
+        return result
+    }
+    for (i in 0..2) {
+        if (i == 0 && extra[id] != "" && n % 10 in  1..4) {
+            result.add(name[3 + id][n % 10])
+            logic = false
+            newN /= 10
+            continue
+        }
+        result.add(0, name[i][newN % 10])
+        newN /= 10
+    }
+    if (logic) result.add(extra[id])
+    return result
+}
+*/
+
+fun part(n: Int, extra: String): MutableList<String> {
+    if (n == 0) return mutableListOf()
+    val name = listOf(listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"),
+            listOf("", "десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"),
+            listOf("", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот"),
+            listOf("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"),
+            listOf("", "одна тысяча", "две тысячи", "три тысячи", "четыре тысячи"),
             listOf("", "одна тысяча", "две тысячи", "три тысячи", "четыре тысячи"))
     var result = mutableListOf<String>()
     var newN = n
@@ -370,9 +406,20 @@ fun part(n: Int, extra: String): MutableList<String> {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 
+/**
+fun russian(n: Int): String {
+    if (n == 0) return "ноль"
+    var result = mutableListOf<String>()
+    var newN = abs(n)
+    for (i in 0..(digitNumber(abs(n)) - 1)/ 3) {
+        result = (part(newN % 1000, i) + result).toMutableList()
+        newN /= 1000
+    }
+    if (n < 0) result.add(0, "минус")
+    return (result).filter { it != "" }.joinToString(" ")
+}
+
+*/
+
 fun russian(n: Int): String =
         (part(n / 1000, "тысяч") + part(n % 1000, "")).filter { it != ""}.joinToString(" ")
-
-fun main(args: Array<String>) {
-    println(russian( 11100))
-}
