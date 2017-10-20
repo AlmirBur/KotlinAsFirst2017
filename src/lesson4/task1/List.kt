@@ -287,7 +287,6 @@ fun decimalFromString(str: String, base: Int): Int {
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 fun roman(n: Int): String {
-    if (n > 39999) return "Число больше 3999"
     val name = listOf(listOf("I", "V"), listOf("X", "L"), listOf("C", "D"), listOf("M"))
     var newN = n
     var mod: Int
