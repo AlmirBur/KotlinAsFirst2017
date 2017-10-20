@@ -408,6 +408,8 @@ fun part(n: Int, extra: String): MutableList<String> {
 /**
 fun russian(n: Int): String {
     if (n == 0) return "ноль"
+    if (n == Int.MIN_VALUE) return "минус два миллиарда сто сорок семь миллионов четыреста восемьдесят три тысячи шестьсот сорок восемь"
+
     var result = mutableListOf<String>()
     var newN = abs(n)
     for (i in 0..(digitNumber(abs(n)) - 1)/ 3) {

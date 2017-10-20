@@ -83,26 +83,7 @@ fun fib(n: Int): Int {
     return ((pow(a + b, n.toDouble()) - pow(a - b, n.toDouble())) / sqrt(5.0)).toInt()
 }
 
-/* if (n < 3) return 1
-var f1 = 1
-var f2 = 1
-var x: Int
-for (i in 4..n) {
-    f2 += f1
-    f1 = f2 - f1
-}
-return f1 + f2
-*/
-
-/*
-    return when{
-        n < 3 -> 1
-        else -> fib(n - 2) + fib(n - 1)
-    }
-}
-*/
-
-fun nod(m: Int, n: Int): Int {
+fun gcd(m: Int, n: Int): Int { //greatest common divisor
     var newM = m
     var newN = n
     while (max(newM, newN) % min(newM, newN) != 0) {
@@ -119,13 +100,7 @@ fun nod(m: Int, n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 
-fun lcm(m: Int, n: Int): Int = m * n / nod(m, n)
-
-/* fun lcm(m: Int, n: Int): Int { /** HOK = m * n / HOD(m, n) <-по алгю евклида8*/
-    for (i in max(m, n)..m * n) if (i % m == 0 && i % n == 0) return i
-    return -1
-}
-*/
+fun lcm(m: Int, n: Int): Int = m * n / gcd(m, n)
 
 /**
  * Простая
@@ -142,10 +117,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    for (i in n - 1 downTo sqrt(n.toDouble()).toInt()) if (n % i == 0) return i
-    return 1
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая
@@ -154,12 +126,7 @@ fun maxDivisor(n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    for (i in 2..min(m, n)) {
-        if (m % i == 0 && n % i == 0) return false
-    }
-    return true
-}
+fun isCoPrime(m: Int, n: Int): Boolean = gcd(m, n) == 1
 
 
 /**
@@ -171,7 +138,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
     return if (m == 0) true
-    else sqrt(n.toDouble()).toInt() - sqrt(m.toDouble() - 0.1).toInt() - 1 >= 0
+    else sqrt(n.toDouble()).toInt() - sqrt(m.toDouble() - 0.1).toInt() >= 1
 }
 
 /**
@@ -182,13 +149,15 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun sin(x: Double, eps: Double): Double {
-    val newX = x % (PI * 2)
-    var division = newX
-    var result = division
-    for (i in 1..1000) {
-        division = pow(-1.0, (i % 2).toDouble()) * pow(newX, (i * 2 + 1).toDouble()) / factorial(i * 2 + 1)
-        result += division
-        if (abs(division) < eps) return result
+    var newX = x % (PI * 2)
+    val multiplier = newX * newX
+    var part = newX
+    var result = part
+    for (i in 1..85) {
+        newX *= multiplier
+        part = pow(-1.0, (i % 2).toDouble()) * newX / factorial(i * 2 + 1)
+        result += part
+        if (abs(part) < eps) return result
     }
     return -1.0
 }
@@ -201,13 +170,16 @@ fun sin(x: Double, eps: Double): Double {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun cos(x: Double, eps: Double): Double {
-    val newX = x % (PI * 2)
-    var division = 1.0
-    var result = division
-    for (i in 1..1000) {
-        division = pow(-1.0, (i % 2).toDouble()) * pow(newX, (i * 2).toDouble()) / factorial(i * 2)
-        result += division
-        if (abs(division) < eps) return result
+    var newX = x % (PI * 2)
+    val multiplier = newX * newX
+    var part = 1.0
+    var result = part
+    newX *= newX
+    for (i in 1..85) {
+        part = pow(-1.0, (i % 2).toDouble()) * newX / factorial(i * 2)
+        result += part
+        newX *= multiplier
+        if (abs(part) < eps) return result
     }
     return -1.0
 }
