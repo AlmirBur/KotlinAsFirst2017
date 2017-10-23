@@ -226,6 +226,13 @@ fun hasDifferentDigits(n: Int): Boolean {
     return false
 }
 
+fun powInt(m: Int, n: Int): Int {
+    if (m == 0 && n == 0 || n < 0) throw IllegalArgumentException()
+    var result = 1
+    for (i in 1..n) result *= m
+    return result
+}
+
 /**
  * Сложная
  *
@@ -238,7 +245,7 @@ fun squareSequenceDigit(n: Int): Int {
     for (i in 1..n) {
         k += digitNumber(i * i)
         if (k >= n)
-            return i * i % pow(10.0, (k - n + 1).toDouble()).toInt() / pow(10.0, (k - n).toDouble()).toInt()
+            return i * i % powInt(10, (k - n + 1)) / powInt(10, (k - n))
     }
     return -1
 }
@@ -255,7 +262,7 @@ fun fibSequenceDigit(n: Int): Int {
     for (i in 1..n) {
         k += digitNumber(fib(i))
         if (k >= n)
-            return fib(i) % pow(10.0, (k - n + 1).toDouble()).toInt() / pow(10.0, (k - n).toDouble()).toInt()
+            return fib(i) % powInt(10, (k - n + 1)) / powInt(10, (k - n))
     }
     return -1
 }

@@ -193,7 +193,7 @@ fun factorize(n: Int): List<Int> {
     var newN = n
     while (newN != 1) {
         list.add(minDivisor(newN))
-        newN /= minDivisor(newN)
+        newN /= list.last()
     }
     return list
 }
