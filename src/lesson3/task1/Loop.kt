@@ -1,6 +1,5 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson3.task1
-import lesson1.task1.quadraticRootProduct
 import java.lang.Math.*
 /**
  * Пример
@@ -62,7 +61,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Например, число 1 содержит 1 цифру, 456 -- 3 цифры, 65536 -- 5 цифр.
  */
 fun digitNumber(n: Int): Int {
-    var k: Int = 0
+    var k = 0
     var num: Int = abs(n)
     do {
         num /= 10
@@ -155,7 +154,7 @@ fun sin(x: Double, eps: Double): Double {
     var result = part
     for (i in 1..85) {
         newX *= multiplier
-        part = pow(-1.0, (i % 2).toDouble()) * newX / factorial(i * 2 + 1)
+        part = powInt(-1, i % 2) * newX / factorial(i * 2 + 1)
         result += part
         if (abs(part) < eps) return result
     }
@@ -176,7 +175,7 @@ fun cos(x: Double, eps: Double): Double {
     var result = part
     newX *= newX
     for (i in 1..85) {
-        part = pow(-1.0, (i % 2).toDouble()) * newX / factorial(i * 2)
+        part = powInt(-1, i % 2) * newX / factorial(i * 2)
         result += part
         newX *= multiplier
         if (abs(part) < eps) return result

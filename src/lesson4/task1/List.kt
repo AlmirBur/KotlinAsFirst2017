@@ -115,10 +115,7 @@ fun abs(v: List<Double>): Double = sqrt(v.map { it * it }.sum())
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double {
-    return if (list.size == 0) 0.0
-    else list.sum() / list.size
-}
+fun mean(list: List<Double>): Double = if (list.isEmpty()) 0.0 else list.sum() / list.size
 
 /**
  * Средняя
@@ -232,7 +229,7 @@ fun convert(n: Int, base: Int): List<Int> {
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun convertToString(n: Int, base: Int): String {
-    val digitName = listOf<Char>('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+    val digitName = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
             'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')
     val newN = convert(n, base).map { digitName[it] }
     return newN.joinToString("")
@@ -266,9 +263,9 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     val list = mutableListOf<Int>()
-    val digitName = listOf<Char>('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+    val digitName = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
             'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')
-    for (i in 0..str.length - 1) {
+    for (i in 0 until str.length) {
         for (j in 0..36)
             if (str[i] == digitName[j]) {
                 list.add(j)
@@ -297,8 +294,8 @@ fun roman(n: Int): String {
             newN /= 10
             continue
         }
-        when {
-            mod == 4 || mod == 9 -> result = name[i][0] + name[mod / 5 + i][(mod / 5 + 1) % 2] + result
+        when (mod) {
+            4, 9 -> result = name[i][0] + name[mod / 5 + i][(mod / 5 + 1) % 2] + result
             else -> {
                 var temp = ""
                 for (j in 2..mod % 5 + mod / 5) temp += name[i][0]
@@ -341,7 +338,7 @@ fun part(n: Int, id: Int): MutableList<String> {
                       listOf("", "одна тысяча", "две тысячи", "три тысячи", "четыре тысячи"),
                       listOf("", "один миллион", "два миллиона", "три миллиона", "четыре миллиона"),
                       listOf("", "один миллиард", "два миллиарда"))
-    var result = mutableListOf<String>()
+    val result = mutableListOf<String>()
     var newN = n
     var logic = true
     if (n % 100 in 11..19) {

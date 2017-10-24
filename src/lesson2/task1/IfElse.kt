@@ -34,16 +34,11 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String{
-    return when{
-        age % 100 in 11..14 -> "$age лет"
-        age % 10 == 1 -> "$age год"
-        age % 10 in 2..4 -> "$age года"
-        else -> "$age лет"
-
-    }
-
-
+fun ageDescription(age: Int): String = when {
+    age % 100 in 11..14 -> "$age лет"
+    age % 10 == 1 -> "$age год"
+    age % 10 in 2..4 -> "$age года"
+    else -> "$age лет"
 }
 
 /**
@@ -60,10 +55,11 @@ fun timeForHalfWay(t1: Double, v1: Double,
     val s2 = t2 * v2
     val s3 = t3 * v3
     val halfS = (s1 + s2 + s3) / 2.0
-    return if (s1 >= halfS) halfS / v1
-    else
-        if (s1 + s2 >= halfS) t1 + (halfS - s1) / v2
-        else t1 + t2 + (halfS - s1 - s2) / v3
+    return when {
+        s1 >= halfS -> halfS / v1
+        s1 + s2 >= halfS -> t1 + (halfS - s1) / v2
+        else -> t1 + t2 + (halfS - s1 - s2) / v3
+    }
 }
 
 /**
