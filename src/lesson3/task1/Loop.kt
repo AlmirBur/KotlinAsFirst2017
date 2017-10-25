@@ -152,7 +152,7 @@ fun sin(x: Double, eps: Double): Double {
     val multiplier = newX * newX
     var part = newX
     var result = part
-    for (i in 1..85) {
+    for (i in 1..Int.MAX_VALUE) {
         newX *= multiplier
         part = powInt(-1, i % 2) * newX / factorial(i * 2 + 1)
         result += part
@@ -174,7 +174,7 @@ fun cos(x: Double, eps: Double): Double {
     var part = 1.0
     var result = part
     newX *= newX
-    for (i in 1..85) {
+    for (i in 1..Int.MAX_VALUE) {
         part = powInt(-1, i % 2) * newX / factorial(i * 2)
         result += part
         newX *= multiplier
