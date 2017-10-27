@@ -135,10 +135,8 @@ fun isCoPrime(m: Int, n: Int): Boolean = gcd(m, n) == 1
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean {
-    return if (m == 0) true
-    else sqrt(n.toDouble()).toInt() - sqrt(m.toDouble() - 0.1).toInt() >= 1
-}
+fun squareBetweenExists(m: Int, n: Int): Boolean = if (m == 0) true
+    else floor(sqrt(n.toDouble())) - floor(sqrt(m.toDouble() - 0.1)) >= 1
 
 /**
  * Средняя
@@ -152,13 +150,14 @@ fun sin(x: Double, eps: Double): Double {
     val multiplier = newX * newX
     var part = newX
     var result = part
-    for (i in 1..Int.MAX_VALUE) {
+    var i = 0
+    while (abs(part) >= eps) {
+        i ++
         newX *= multiplier
         part = powInt(-1, i % 2) * newX / factorial(i * 2 + 1)
         result += part
-        if (abs(part) < eps) return result
     }
-    return -1.0
+    return result
 }
 
 /**
@@ -173,14 +172,15 @@ fun cos(x: Double, eps: Double): Double {
     val multiplier = newX * newX
     var part = 1.0
     var result = part
+    var i = 0
     newX *= newX
-    for (i in 1..Int.MAX_VALUE) {
+    while (abs(part) >= eps) {
+        i++
         part = powInt(-1, i % 2) * newX / factorial(i * 2)
         result += part
         newX *= multiplier
-        if (abs(part) < eps) return result
     }
-    return -1.0
+    return result
 }
 
 /**
@@ -244,7 +244,7 @@ fun squareSequenceDigit(n: Int): Int {
     for (i in 1..n) {
         k += digitNumber(i * i)
         if (k >= n)
-            return i * i % powInt(10, (k - n + 1)) / powInt(10, (k - n))
+            return i * i / powInt(10, (k - n)) % 10
     }
     return -1
 }
@@ -261,7 +261,7 @@ fun fibSequenceDigit(n: Int): Int {
     for (i in 1..n) {
         k += digitNumber(fib(i))
         if (k >= n)
-            return fib(i) % powInt(10, (k - n + 1)) / powInt(10, (k - n))
+            return fib(i) / powInt(10, (k - n)) % 10
     }
     return -1
 }

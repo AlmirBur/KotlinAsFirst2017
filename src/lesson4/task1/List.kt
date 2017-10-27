@@ -184,16 +184,20 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
+
 fun factorize(n: Int): List<Int> {
     val list = mutableListOf<Int>()
     var newN = n
-    for (i in 2..n) {
+    var i = 1
+    while (i <= sqrt(newN.toDouble()).toInt()) {
+        i++
         while (newN % i == 0) {
             list.add(i)
             newN /= i
         }
-        if (newN == 1) break
     }
+    if (list.isEmpty()) return mutableListOf(n)
+    if (newN > list.last()) list.add(newN)
     return list
 }
 
@@ -222,6 +226,9 @@ fun convert(n: Int, base: Int): List<Int> {
     return list
 }
 
+val digitName = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+        'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')
+
 /**
  * Сложная
  *
@@ -231,8 +238,6 @@ fun convert(n: Int, base: Int): List<Int> {
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun convertToString(n: Int, base: Int): String {
-    val digitName = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
-            'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')
     val newN = convert(n, base).map { digitName[it] }
     return newN.joinToString("")
 }
@@ -265,14 +270,9 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     val list = mutableListOf<Int>()
-    val digitName = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
-            'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')
     for (i in 0 until str.length) {
-        for (j in 0..36)
-            if (str[i] == digitName[j]) {
-                list.add(j)
-                break
-            }
+        if (str[i] - 'a' in 0..25) list.add(str[i] - 'a' + 10)
+        else list.add(str[i].toString().toInt())
     }
     return decimal(list, base)
 }
@@ -289,7 +289,7 @@ fun roman(n: Int): String {
     val name = listOf(listOf("I", "V"), listOf("X", "L"), listOf("C", "D"), listOf("M"))
     var newN = n
     var mod: Int
-    var result = ""
+    val result = mutableListOf<String>()
     for (i in 0..2) {
         mod = newN % 10
         if (mod == 0) {
@@ -297,17 +297,16 @@ fun roman(n: Int): String {
             continue
         }
         when (mod) {
-            4, 9 -> result = name[i][0] + name[mod / 5 + i][(mod / 5 + 1) % 2] + result
+            4, 9 -> result.add(0, name[i][0] + name[mod / 5 + i][(mod / 5 + 1) % 2])
             else -> {
-                var temp = ""
-                for (j in 2..mod % 5 + mod / 5) temp += name[i][0]
-                result = name[i][mod / 5] + temp + result
+                for (j in 2..mod % 5 + mod / 5) result.add(0, name[i][0])
+                result.add(0, name[i][mod / 5])
             }
         }
         newN /= 10
     }
-    for (i in 1..n / 1000) result = "M" + result
-    return result
+    for (i in 1..n / 1000) result.add(0, "M")
+    return result.joinToString("")
 }
 
 /**
@@ -318,14 +317,14 @@ fun roman (n: Int): String {
                       listOf("", "M"))
     var newN = n
     var mod = n % 10
-    var result = ""
+    var result = mutableListOf<String>()
     for (i in 0..2) {
-        result = name[i][mod] + result
+        result.add(0, name[i][mod])
         newN /= 10
         mod = newN % 10
     }
-    for (i in 1..n / 1000) result = "M" + result
-    return result
+    for (i in 1..n / 1000) result.add(0, "M")
+    return result.joinToString("")
 }
 */
 
@@ -333,30 +332,35 @@ fun roman (n: Int): String {
 fun part(n: Int, id: Int): MutableList<String> {
     if (n == 0) return mutableListOf()
     val extra = listOf("", "тысяч", "миллионов", "миллиардов")
-    val name = listOf(listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"),
-                      listOf("", "десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"),
-                      listOf("", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот"),
-                      listOf("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"),
-                      listOf("", "одна тысяча", "две тысячи", "три тысячи", "четыре тысячи"),
-                      listOf("", "один миллион", "два миллиона", "три миллиона", "четыре миллиона"),
-                      listOf("", "один миллиард", "два миллиарда"))
+    val hundreds = listOf(listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"),
+            listOf("", "десять", "двадцать", "тридцать", "сорок", "пятьдесят",
+                    "шестьдесят", "семьдесят","восемьдесят", "девяносто"),
+            listOf("", "сто", "двести", "триста", "четыреста", "пятьсот",
+                    "шестьсот", "семьсот", "восемьсот", "девятьсот"))
+
+    val thousands = listOf(listOf("", "одна тысяча", "две тысячи", "три тысячи", "четыре тысячи"),
+            listOf("", "один миллион", "два миллиона", "три миллиона", "четыре миллиона"),
+            listOf("", "один миллиард", "два миллиарда"))
+
+    val teens = listOf("", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
+            "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
     val result = mutableListOf<String>()
     var newN = n
     var logic = true
     if (n % 100 in 11..19) {
-        result.add(name[2][n / 100])
-        result.add(name[3][n % 10])
+        result.add(hundreds[2][n / 100])
+        result.add(teens[n % 10])
         result.add(extra[id])
         return result
     }
     for (i in 0..2) {
-        if (i == 0 && extra[id] != "" && n % 10 in  1..4) {
-            result.add(name[3 + id][n % 10])
+        if (i == 0 && id != 0 && n % 10 in  1..4) {
+            result.add(thousands [id - 1][n % 10])
             logic = false
             newN /= 10
             continue
         }
-        result.add(0, name[i][newN % 10])
+        result.add(0, hundreds[i][newN % 10])
         newN /= 10
     }
     if (logic) result.add(extra[id])
@@ -382,4 +386,21 @@ fun russian(n: Int): String {
     }
     if (n < 0) result.add(0, "минус")
     return (result).filter { it != "" }.joinToString(" ")
+}
+
+fun main(args: Array<String>) {
+    val prime = mutableListOf(2, 3)
+    for (i in 5..Int.MAX_VALUE) {
+        var log = false
+        for (j in 0 until prime.size) {
+            if (i % prime[j] == 0) {
+                log = true
+                break
+            }
+            else if (prime[j] >= sqrt(i.toDouble())) break
+        }
+        if (i % 1000000 == 0) println(i)
+        if (log) continue
+        prime.add(i)
+    }
 }

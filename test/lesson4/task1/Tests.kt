@@ -225,5 +225,13 @@ class Tests {
         assertEquals("двести тысяч два", russian(200002))
         assertEquals("девятьсот тысяч", russian(900000))
         assertEquals("двенадцать", russian(12))
+        assertEquals("ноль", russian(0))
+        assertEquals("один миллион триста тринадцать тысяч пятьсот", russian(1313500))
+        assertEquals("минус двенадцать миллионов триста тринадцать", russian(-12000313))
+        assertEquals("минус один миллиард сто четыре миллиона один", russian(-1104000001))
+        assertEquals("минус два миллиарда сто сорок семь миллионов четыреста восемьдесят три тысячи " +
+                              "шестьсот сорок восемь", russian(Int.MIN_VALUE))
+        assertEquals("два миллиарда сто сорок семь миллионов четыреста восемьдесят три тысячи " +
+                              "шестьсот сорок семь", russian(Int.MAX_VALUE))
     }
 }
