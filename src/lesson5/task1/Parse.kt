@@ -75,7 +75,7 @@ fun dateStrToDigit(str: String): String {
         val date = mutableListOf(twoDigitStr(parts[0].toInt()),
                                  twoDigitStr(months.indexOf(parts[1]) + 1), //00 если нету
                                  twoDigitStr(parts[2].toInt() / 100) + twoDigitStr(parts[2].toInt() % 100))
-        if (parts[0].length !in 1..2 || date[1] == "00" || parts[2].toInt() !in 0..9999) throw Exception()
+        if (parts[0].length !in 1..2 || date[1] == "00" || parts[2].toInt() < 0) throw Exception()
         return date.joinToString(".")
     }
     catch (e: Exception) { return "" }
@@ -94,7 +94,8 @@ fun dateDigitToStr(digital: String): String {
         val date = listOf(parts[0].toInt().toString(),
                 months[parts[1].toInt() - 1],
                 parts[2].toInt().toString())
-        if (parts[0].length !in 1..2 || parts[1].length !in 1..2 || parts[2].length != 4) throw (Exception())
+        if (parts[0].length !in 1..2 || parts[1].length !in 1..2 || parts[2].toInt() < 0 || parts.size > 3)
+            throw (Exception())
         return date.joinToString(" ")
     }
     catch (e: Exception) { return "" }
