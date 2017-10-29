@@ -377,7 +377,8 @@ fun part(n: Int, id: Int): MutableList<String> {
 
 fun russian(n: Int): String {
     if (n == 0) return "ноль"
-    if (n == Int.MIN_VALUE) return "минус два миллиарда сто сорок семь миллионов четыреста восемьдесят три тысячи шестьсот сорок восемь"
+    if (n == Int.MIN_VALUE)
+        return "минус два миллиарда сто сорок семь миллионов четыреста восемьдесят три тысячи шестьсот сорок восемь"
     var result = mutableListOf<String>()
     var newN = abs(n)
     for (i in 0..(digitNumber(abs(n)) - 1) / 3) {
@@ -386,21 +387,4 @@ fun russian(n: Int): String {
     }
     if (n < 0) result.add(0, "минус")
     return (result).filter { it != "" }.joinToString(" ")
-}
-
-fun main(args: Array<String>) {
-    val prime = mutableListOf(2, 3)
-    for (i in 5..Int.MAX_VALUE) {
-        var log = false
-        for (j in 0 until prime.size) {
-            if (i % prime[j] == 0) {
-                log = true
-                break
-            }
-            else if (prime[j] >= sqrt(i.toDouble())) break
-        }
-        if (i % 1000000 == 0) println(i)
-        if (log) continue
-        prime.add(i)
-    }
 }
