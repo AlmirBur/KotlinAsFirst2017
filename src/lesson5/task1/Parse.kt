@@ -166,7 +166,7 @@ fun bestHighJump(jumps: String): Int {
     var max = -1
     if (parts.size % 2 == 1 || parts.isEmpty()) return -1
     return try {
-        for (i in 0..parts.size / 2 step 2)
+        for (i in 0 until parts.size step 2)
             if (parts[i].toInt() > max && parts[i + 1].last() == '+') max = parts[i].toInt()
         max
     }
