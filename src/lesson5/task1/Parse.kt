@@ -114,12 +114,12 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    val WhiteList = "+1234567890 -()"
+    val whiteList = "+1234567890 -()"
     val number = mutableListOf<Char>()
     for (char in phone) {
         when {
-            char !in WhiteList -> return ""
-            WhiteList.indexOf(char) in 0..10 -> number.add(char)
+            char !in whiteList -> return ""
+            whiteList.indexOf(char) in 0..10 -> number.add(char)
         }
     }
     return number.joinToString("")
@@ -135,7 +135,20 @@ fun flattenPhoneNumber(phone: String): String {
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    val whiteList = "1234567890 -%"
+    for (char in jumps) if (char !in whiteList) return -1
+    val parts = jumps.split(" ").filter { it != "-" && it != "%" }
+    var max = -1
+    try {
+        for (element in parts) {
+            if (element == "") return -1
+            else if (element.toInt() > max) max = element.toInt()
+        }
+        return max
+    }
+    catch (e: NumberFormatException) { return -1 }
+}
 
 /**
  * Сложная
