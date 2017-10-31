@@ -1,6 +1,8 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson5.task1
 
+import lesson4.task1.part
+
 /**
  * Пример
  *
@@ -138,7 +140,7 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     val whiteList = "1234567890 -%"
     for (char in jumps) if (char !in whiteList) return -1
-    val parts = jumps.split(" ").filter { it != "-" && it != "%" && it != ""}
+    val parts = jumps.split(" ").filter { it != "-" && it != "%" && it != "" }
     var max = -1
     return try {
         for (element in parts) if (element.toInt() > max) max = element.toInt()
@@ -157,7 +159,19 @@ fun bestLongJump(jumps: String): Int {
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val whiteList = "1234567890 -+%"
+    for (char in jumps) if (char !in whiteList) return -1
+    val parts = jumps.split(" ").filter { it != "" }
+    var max = -1
+    if (parts.size % 2 == 1 || parts.isEmpty()) return -1
+    return try {
+        for (i in 0..parts.size / 2 step 2)
+            if (parts[i].toInt() > max && parts[i + 1].last() == '+') max = parts[i].toInt()
+        max
+    }
+    catch (e: NumberFormatException) { -1 }
+}
 
 /**
  * Сложная
