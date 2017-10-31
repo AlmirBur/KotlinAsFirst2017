@@ -76,7 +76,7 @@ fun dateStrToDigit(str: String): String {
         if (parts[0].length !in 1..2 || months.indexOf(parts[1]) + 1 == 0 || parts[2].toInt() < 0) ""
         else twoDigitStr(parts[0].toInt()) + "." +
              twoDigitStr(months.indexOf(parts[1]) + 1) + "." +
-             twoDigitStr(parts[2].toInt() / 100) + twoDigitStr(parts[2].toInt() % 100)
+             "${parts[2].toInt()}"
     }
     catch (e: NumberFormatException) { "" }
 }
@@ -94,7 +94,7 @@ fun dateDigitToStr(digital: String): String {
     return try {
         when {
             (parts[1].toInt() !in 1..12) -> ""
-            (parts[0].length != 2 || parts[1].length != 2 || parts[2].length < 4) -> ""
+            (parts[0].length != 2 || parts[1].length != 2) -> ""
             else -> "${parts[0].toInt()} ${months[parts[1].toInt() - 1]} ${parts[2].toInt()}"
         }
     }
@@ -113,7 +113,17 @@ fun dateDigitToStr(digital: String): String {
  * Все символы в номере, кроме цифр, пробелов и +-(), считать недопустимыми.
  * При неверном формате вернуть пустую строку
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val WhiteList = "+1234567890 -()"
+    val number = mutableListOf<Char>()
+    for (char in phone) {
+        when {
+            char !in WhiteList -> return ""
+            WhiteList.indexOf(char) in 0..10 -> number.add(char)
+        }
+    }
+    return number.joinToString("")
+}
 
 /**
  * Средняя
