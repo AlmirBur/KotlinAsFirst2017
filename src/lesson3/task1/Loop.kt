@@ -242,9 +242,9 @@ fun powInt(m: Int, n: Int): Int {
 fun squareSequenceDigit(n: Int): Int {
     var k = 0
     for (i in 1..n) {
-        k += digitNumber(i * i)
+        k += (i * i).toString().length
         if (k >= n)
-            return i * i % powInt(10, (k - n + 1)) / powInt(10, (k - n))
+            return i * i / powInt(10, (k - n)) % 10
     }
     return -1
 }
