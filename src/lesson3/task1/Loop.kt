@@ -135,8 +135,8 @@ fun isCoPrime(m: Int, n: Int): Boolean = gcd(m, n) == 1
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean = if (m == 0) true
-    else floor(sqrt(n.toDouble())) - floor(sqrt(m.toDouble() - 0.1)) >= 1
+fun squareBetweenExists(m: Int, n: Int): Boolean = if (sqrt(m.toDouble()) % 1 == 0.0) true
+        else floor(sqrt(n.toDouble())) - floor(sqrt(m.toDouble() - 0.1)) >= 1
 
 /**
  * Средняя
@@ -244,7 +244,7 @@ fun squareSequenceDigit(n: Int): Int {
     for (i in 1..n) {
         k += digitNumber(i * i)
         if (k >= n)
-            return i * i / powInt(10, (k - n)) % 10
+            return i * i % powInt(10, (k - n + 1)) / powInt(10, (k - n))
     }
     return -1
 }

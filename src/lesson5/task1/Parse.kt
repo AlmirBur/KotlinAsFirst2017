@@ -71,14 +71,14 @@ val months = listOf("января", "февраля", "марта", "апрел�
  */
 fun dateStrToDigit(str: String): String {
     val parts = str.split(" ")
-    try {
-        val date = mutableListOf(twoDigitStr(parts[0].toInt()),
-                                 twoDigitStr(months.indexOf(parts[1]) + 1), //00 если нету
-                                 twoDigitStr(parts[2].toInt() / 100) + twoDigitStr(parts[2].toInt() % 100))
-        if (parts[0].length !in 1..2 || date[1] == "00" || parts[2].toInt() < 0) throw Exception()
-        return date.joinToString(".")
+    if (parts.size != 3) return ""
+    return try {
+        if (parts[0].length !in 1..2 || months.indexOf(parts[1]) + 1 == 0 || parts[2].toInt() < 0) ""
+        else twoDigitStr(parts[0].toInt()) + "." +
+             twoDigitStr(months.indexOf(parts[1]) + 1) + "." +
+             twoDigitStr(parts[2].toInt() / 100) + twoDigitStr(parts[2].toInt() % 100)
     }
-    catch (e: Exception) { return "" }
+    catch (e: NumberFormatException) { "" }
 }
 
 /**
@@ -90,15 +90,15 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     val parts = digital.split(".")
-    try {
-        val date = listOf(parts[0].toInt().toString(),
-                months[parts[1].toInt() - 1],
-                parts[2].toInt().toString())
-        if (parts[0].length !in 1..2 || parts[1].length !in 1..2 || parts[2].toInt() < 0 || parts.size > 3)
-            throw (Exception())
-        return date.joinToString(" ")
+    if (parts.size != 3) return ""
+    return try {
+        when {
+            (parts[1].toInt() !in 1..12) -> ""
+            (parts[0].length != 2 || parts[1].length != 2 || parts[2].length < 4) -> ""
+            else -> "${parts[0].toInt()} ${months[parts[1].toInt() - 1]} ${parts[2].toInt()}"
+        }
     }
-    catch (e: Exception) { return "" }
+    catch (e: NumberFormatException) { "" }
 }
 
 /**
