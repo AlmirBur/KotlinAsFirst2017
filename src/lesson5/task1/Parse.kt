@@ -2,6 +2,7 @@
 package lesson5.task1
 
 import lesson4.task1.part
+import java.lang.IllegalArgumentException
 
 /**
  * Пример
@@ -182,7 +183,23 @@ fun bestHighJump(jumps: String): Int {
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val whiteList = "1234567890 -+"
+    for (char in expression) if (char !in whiteList) throw IllegalArgumentException()
+    val parts = expression.split(" ").filter { it != "" }
+    if (parts.isEmpty()) throw IllegalArgumentException()
+    try {
+        var sum = parts[0].toInt() // <=0 ???
+        for (i in 1 until parts.size step 2)  when {
+                parts[i + 1].toInt() <= 0 -> throw IllegalArgumentException()
+                parts[i] == "+" -> sum += parts[i + 1].toInt()
+                parts[i] == "-" -> sum -= parts[i + 1].toInt()
+                else -> throw IllegalArgumentException()
+        }
+        return sum
+    }
+    catch (e: NumberFormatException) { throw IllegalArgumentException() }
+}
 
 /**
  * Сложная
