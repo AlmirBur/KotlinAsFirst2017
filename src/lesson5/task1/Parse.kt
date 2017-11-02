@@ -117,7 +117,8 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    val whiteList = "+1234567890 -()"
+    if (phone == "+") return ""
+    val whiteList = "1234567890 -+()"
     val number = mutableListOf<Char>()
     for (char in phone) {
         when {
@@ -191,7 +192,7 @@ fun plusMinus(expression: String): Int {
     try {
         var sum = parts[0].toInt()
         for (i in 1 until parts.size step 2)  when {
-                parts[i + 1].toInt() <= 0 -> throw IllegalArgumentException()
+                parts[i + 1].toInt() < 0 -> throw IllegalArgumentException()
                 parts[i] == "+" -> sum += parts[i + 1].toInt()
                 parts[i] == "-" -> sum -= parts[i + 1].toInt()
                 else -> throw IllegalArgumentException()
