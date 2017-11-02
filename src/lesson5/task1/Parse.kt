@@ -118,7 +118,7 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String {
     if (phone == "+") return ""
-    val whiteList = "1234567890 -+()"
+    val whiteList = "+1234567890 -()"
     val number = mutableListOf<Char>()
     for (char in phone) {
         when {
