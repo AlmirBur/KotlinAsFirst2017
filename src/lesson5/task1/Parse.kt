@@ -189,7 +189,7 @@ fun plusMinus(expression: String): Int {
     val parts = expression.split(" ").filter { it != "" }
     if (parts.isEmpty()) throw IllegalArgumentException()
     try {
-        var sum = parts[0].toInt() // <=0 ???
+        var sum = parts[0].toInt()
         for (i in 1 until parts.size step 2)  when {
                 parts[i + 1].toInt() <= 0 -> throw IllegalArgumentException()
                 parts[i] == "+" -> sum += parts[i + 1].toInt()
