@@ -296,6 +296,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     if (bracketsSum != 0) throw IllegalArgumentException()
     val conveyor = mutableListOf<Int>()
     for (i in 0 until cells) conveyor.add(0)
+    if (commands.isEmpty()) return conveyor
     try {
         for (i in 1..limit) {
             when (commands[posComm]) {                      /** выход за пределы массива */
