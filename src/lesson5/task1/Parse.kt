@@ -283,4 +283,51 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val whiteList = "><+-[] "
+    var posConv = cells / 2
+    var posComm = 0
+    var bracketsSum = 0
+    for (char in commands) when (char) {
+        !in whiteList -> throw IllegalArgumentException()
+        '[' -> bracketsSum++
+        ']' -> bracketsSum--
+    }
+    if (bracketsSum != 0) throw IllegalArgumentException()
+    val conveyor = mutableListOf<Int>()
+    for (i in 0 until cells) conveyor.add(0)
+    try {
+        for (i in 1..limit) {
+            when (commands[posComm]) {                      /** выход за пределы массива */
+                '>' -> { posComm++; posConv++ }
+                '<' -> { posComm++; posConv-- }
+                '+' -> { conveyor[posConv]++; posComm++ }
+                '-' -> { conveyor[posConv]--; posComm++ }
+                '[' -> if (conveyor[posConv] == 0) {
+                           bracketsSum = 1
+                           posComm++
+                           while (bracketsSum != 0) {
+                               if (commands[posComm] == '[') bracketsSum++
+                               if (commands[posComm] == ']') bracketsSum--
+                               posComm++
+                           }
+                       }
+                       else posComm++
+                ']' -> if (conveyor[posConv] != 0) {
+                           bracketsSum = -1
+                           posComm++
+                           while (bracketsSum != 0) {
+                               if (commands[posComm - 2] == '[') bracketsSum++
+                               if (commands[posComm - 2] == ']') bracketsSum--
+                               posComm--
+                           }
+                       }
+                       else posComm++
+                ' ' -> posComm++
+            }
+            if (posComm == commands.length) break
+        }
+        return conveyor
+    }
+    catch (e: IndexOutOfBoundsException) { throw IllegalStateException() }
+}
