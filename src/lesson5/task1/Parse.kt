@@ -288,10 +288,13 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var posConv = cells / 2
     var posComm = 0
     var bracketsSum = 0
-    for (char in commands) when (char) {
-        !in whiteList -> throw IllegalArgumentException()
-        '[' -> bracketsSum++
-        ']' -> bracketsSum--
+    var log = false
+    for (char in commands) when {
+        char !in whiteList -> throw IllegalArgumentException()
+        char == ']' && !log -> throw IllegalArgumentException()
+        char == '[' && !log -> { log = true; bracketsSum++ }
+        char == '[' -> bracketsSum++
+        char == ']' -> bracketsSum--
     }
     if (bracketsSum != 0) throw IllegalArgumentException()
     val conveyor = mutableListOf<Int>()
@@ -299,7 +302,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     if (commands.isEmpty()) return conveyor
     try {
         for (i in 1..limit) {
-            when (commands[posComm]) {                      /** выход за пределы массива */
+            when (commands[posComm]) {
                 '>' -> { posComm++; posConv++ }
                 '<' -> { posComm++; posConv-- }
                 '+' -> { conveyor[posConv]++; posComm++ }
@@ -327,6 +330,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 ' ' -> posComm++
             }
             if (posComm == commands.length) break
+            if (posConv !in 0 until cells) throw IllegalStateException()
         }
         return conveyor
     }
