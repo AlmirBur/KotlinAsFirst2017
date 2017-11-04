@@ -329,8 +329,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                        else posComm++
                 ' ' -> posComm++
             }
-            if (posComm == commands.length) break
             if (posConv !in 0 until cells) throw IllegalStateException()
+            if (posComm == commands.length) break
         }
         return conveyor
     }
