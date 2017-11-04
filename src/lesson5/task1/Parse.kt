@@ -126,7 +126,7 @@ fun flattenPhoneNumber(phone: String): String {
         plusSum > 1 -> return ""
         char == '+' -> plusSum++
     }
-    if (number[0] != '+' && plusSum == 1) return ""
+    if (number[0] != '+' && plusSum == 1 || number.isEmpty()) return ""
     return number.joinToString("")
 }
 
