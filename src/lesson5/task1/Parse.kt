@@ -116,6 +116,7 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
+    if (phone == "+") return ""
     val whiteList = "+1234567890 -()"
     val number = mutableListOf<Char>()
     var plusSum = 0
