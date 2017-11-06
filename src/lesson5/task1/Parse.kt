@@ -252,6 +252,7 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
+    if (roman.isEmpty()) return -1
     val newRoman = roman + "A"
     val name = listOf("CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I", "M")
     val value = listOf(900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1, 1000)
