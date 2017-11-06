@@ -1,7 +1,6 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson5.task1
 
-import lesson4.task1.part
 import java.lang.IllegalArgumentException
 
 /**
@@ -120,13 +119,12 @@ fun flattenPhoneNumber(phone: String): String {
     val whiteList = "+1234567890 -()"
     val number = mutableListOf<Char>()
     var plusSum = 0
-    for (char in phone) when {
-        char !in whiteList -> return ""
-        whiteList.indexOf(char) in 0..10 -> number.add(char)
-        plusSum > 1 -> return ""
-        char == '+' -> plusSum++
+    for (char in phone) {
+        if (char !in whiteList) return ""
+        if (char == '+') plusSum++
+        if (whiteList.indexOf(char) in 0..10) number.add(char)
     }
-    if (number.isEmpty() || number[0] != '+' && plusSum == 1) return ""
+    if (number.isEmpty() || number[0] != '+' && plusSum == 1 || plusSum > 1) return ""
     return number.joinToString("")
 }
 
@@ -143,13 +141,7 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     val whiteList = "1234567890 -%"
     for (char in jumps) if (char !in whiteList) return -1
-    val parts = jumps.split(" ").filter { it != "-" && it != "%" && it != "" }
-    var max = -1
-    return try {
-        for (element in parts) if (element.toInt() > max) max = element.toInt()
-        max
-    }
-    catch (e: NumberFormatException) { -1 }
+    return jumps.split(" ").filter { it != "-" && it != "%" && it != "" }.map { it.toInt() }.max() ?: -1
 }
 
 /**
@@ -234,14 +226,14 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть положительными
  */
 fun mostExpensive(description: String): String {
-    val parts = description.split(" ")
-    if (parts.isEmpty() || parts.size % 2 == 1) return ""
+    val parts = description.split("; ")
+    if (parts.isEmpty() || 2 * parts.size != description.split(" ").size) return ""
     var max = -1.0
     var name = ""
     return try {
-        for (i in 1 until parts.size step 2) if (parts[i].substring(0, parts[i].length - 1).toDouble() > max) {
-            max = parts[i].substring(0, parts[i].length - 1).toDouble()
-            name = parts[i - 1]
+        for (i in 0 until parts.size) if (parts[i].split(" ")[1].toDouble() > max) {
+            max = parts[i].split(" ")[1].toDouble()
+            name = parts[i].split(" ")[0]
         }
         name
     }
@@ -259,7 +251,38 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val newRoman = roman + "A"
+    val name = listOf("CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I", "M")
+    val value = listOf(900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1, 1000)
+    val k = listOf(mutableListOf(0, 0, 0, 0), mutableListOf(0, 0, 0, 0), mutableListOf(0, 0, 0, 0), mutableListOf(0))
+    var index: Int
+    val result = mutableListOf<Int>()
+    var i = 1
+    while (i < newRoman.length) when {
+        (newRoman[i - 1].toString() + newRoman[i].toString()) in name -> {
+            index = name.indexOf(newRoman[i - 1].toString() + newRoman[i].toString())
+            result.add(value[index])
+            k[index / 4][index % 4]++
+            i += 2
+        }
+        newRoman[i - 1].toString() in name -> {
+            index = name.indexOf(newRoman[i - 1].toString())
+            result.add(value[index])
+            k[index / 4][index % 4]++
+            i++
+        }
+        else -> return -1
+    }
+    if (result != result.sortedDescending()) return -1
+    for (j in 0..2) when {
+        k[j][0] > 1 || k[j][1] > 1 || k[j][2] > 1 || k[j][3] > 3 -> return -1
+        (k[j][0] == 1 && (k[j][1] != 0 || k[j][2] != 0 || k[j][3] != 0)) ||
+        (k[j][2] == 1 && (k[j][1] != 0 || k[j][0] != 0 || k[j][3] != 0)) ||
+        (k[j][3] >  0 && (k[j][0] != 0 || k[j][2] != 0)) -> return -1
+    }
+    return result.sum()
+}
 
 /**
  * Очень сложная
@@ -302,17 +325,14 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var posConv = cells / 2
     var posComm = 0
     var bracketsSum = 0
-    var log = false
     for (char in commands) when {
         char !in whiteList -> throw IllegalArgumentException()
-        char == ']' && !log -> throw IllegalArgumentException()
-        char == '[' && !log -> { log = true; bracketsSum++ }
+        bracketsSum < 0 -> throw IllegalArgumentException()
         char == '[' -> bracketsSum++
         char == ']' -> bracketsSum--
     }
     if (bracketsSum != 0) throw IllegalArgumentException()
-    val conveyor = mutableListOf<Int>()
-    for (i in 0 until cells) conveyor.add(0)
+    val conveyor = MutableList(cells) { 0 }
     if (commands.isEmpty()) return conveyor
     try {
         for (i in 1..limit) {
