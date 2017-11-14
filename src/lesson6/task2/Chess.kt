@@ -72,7 +72,7 @@ fun square(notation: String): Square =
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
 fun rookMoveNumber(start: Square, end: Square): Int = when {
-    !start.inside() || !end.inside() -> throw IllegalArgumentException()
+    !(start.inside() && end.inside()) -> throw IllegalArgumentException()
     start == end -> 0
     start.column == end.column || start.row == end.row -> 1
     else -> 2
@@ -92,7 +92,12 @@ fun rookMoveNumber(start: Square, end: Square): Int = when {
  *          rookTrajectory(Square(3, 5), Square(8, 5)) = listOf(Square(3, 5), Square(8, 5))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun rookTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun rookTrajectory(start: Square, end: Square): List<Square> = when (rookMoveNumber(start, end)) {
+    0 -> listOf(start)
+    1 -> listOf(start, end)
+    2 -> listOf(start, Square(start.column, end.row), end)
+    else -> throw Exception()
+}
 
 /**
  * Простая
@@ -117,7 +122,13 @@ fun rookTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7).
  */
-fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
+fun bishopMoveNumber(start: Square, end: Square): Int = when {
+    !(start.inside() && end.inside()) -> throw IllegalArgumentException()
+    (start.column + start.row - end.column - end.row) % 2 != 0 -> -1
+    start == end -> 0
+    Math.abs(start.column - end.column) == Math.abs(start.row - end.row) -> 1
+    else -> 2
+}
 
 /**
  * Сложная
@@ -130,14 +141,26 @@ fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
  * Если клетка достижима:
  * - список всегда включает в себя клетку start
  * - клетка end включается, если она не совпадает со start.
- * - между ними должны находиться промежуточные клетки, по порядку от start до end.
+ * - между н ими должны находиться промежуточные клетки, по порядку от start до end.
  *
  * Примеры: bishopTrajectory(Square(3, 3), Square(3, 3)) = listOf(Square(3, 3))
  *          bishopTrajectory(Square(3, 1), Square(3, 7)) = listOf(Square(3, 1), Square(6, 4), Square(3, 7))
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun bishopTrajectory(start: Square, end: Square): List<Square> = when (bishopMoveNumber(start, end)) {
+    -1 -> listOf()
+    0 -> listOf(start)
+    1 -> listOf(start, end)
+    2 -> { if ((end.column + start.column + Math.abs(start.row - end.row)) / 2 > 8 ||
+               (start.row + end.row + Math.abs(start.column - end.column)) / 2 > 8)
+               listOf(start, Square((end.column + start.column - Math.abs(start.row - end.row)) / 2,
+                                    (start.row + end.row - Math.abs(start.column - end.column)) / 2), end)
+           else listOf(start, Square((end.column + start.column + Math.abs(start.row - end.row)) / 2,
+                                     (start.row + end.row + Math.abs(start.column - end.column)) / 2), end)
+         }
+    else -> throw Exception()
+}
 
 /**
  * Средняя
@@ -159,7 +182,9 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = TODO()
+fun kingMoveNumber(start: Square, end: Square): Int =
+        if (!(start.inside() && end.inside())) throw IllegalArgumentException()
+        else Math.max(Math.abs(start.column - end.column), Math.abs(start.row - end.row))
 
 /**
  * Сложная
