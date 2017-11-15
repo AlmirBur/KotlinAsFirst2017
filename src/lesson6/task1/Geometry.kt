@@ -3,6 +3,8 @@ package lesson6.task1
 
 import lesson1.task1.sqr
 import java.lang.IllegalArgumentException
+import java.lang.Math.sin
+import java.lang.Math.cos
 
 /**
  * Точка на плоскости
@@ -107,12 +109,14 @@ fun diameter(vararg points: Point): Segment {
     var max = 0.0
     var begin = Point(0.0, 0.0)
     var end = Point(0.0, 0.0)
-    for (i in 0..points.size - 2) for (j in i + 1 until points.size)
-        if (points[i].distance(points[j]) > max) {
-                max = points[i].distance(points[j])
-                begin = points[i]
-                end = points[j]
+    for (i in 0..points.size - 2) for (j in i + 1 until points.size) {
+        val distance = points[i].distance(points[j])
+        if (distance > max) {
+            max = distance
+            begin = points[i]
+            end = points[j]
         }
+    }
         return Segment(begin, end)
 }
 
@@ -145,7 +149,11 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
-    fun crossPoint(other: Line): Point = TODO()
+    fun crossPoint(other: Line): Point {
+        val denominator = sin(angle - other.angle)
+        return Point((other.b * cos(angle) - b * cos(other.angle)) / denominator,
+                     (other.b * sin(angle) - b * sin(other.angle)) / denominator)
+    }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
@@ -163,21 +171,39 @@ class Line private constructor(val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line = TODO()
+fun lineBySegment(s: Segment): Line = when {
+    s.end.x == s.begin.x -> Line(s.begin, Math.PI / 2)
+    s.end.y == s.begin.y -> Line(s.begin, 0.0)
+    (s.end.y - s.begin.y > 0) xor (s.end.x - s.begin.x > 0) ->
+        Line(s.begin,Math.PI - Math.atan(Math.abs(s.end.y - s.begin.y) / Math.abs(s.end.x - s.begin.x)))
+    else -> Line(s.begin, Math.atan((s.end.y - s.begin.y) / (s.end.x - s.begin.x)))
+}
 
 /**
  * Средняя
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line = TODO()
-
+fun lineByPoints(a: Point, b: Point): Line = when {
+    b.x == a.x -> Line(a, Math.PI / 2)
+    b.y == a.y -> Line(a, 0.0)
+    (b.y - a.y > 0) xor (b.x - a.x > 0) -> Line(a,Math.PI - Math.atan(Math.abs(b.y - a.y) / Math.abs(b.x - a.x)))
+    else -> Line(a, Math.atan((b.y - a.y) / (b.x - a.x)))
+}
 /**
  * Сложная
  *
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
-fun bisectorByPoints(a: Point, b: Point): Line = TODO()
+fun bisectorByPoints(a: Point, b: Point): Line =
+        Line(Point((a.x + b.x) / 2, (a.y + b.y) / 2), (Math.PI / 2 + lineByPoints(a, b).angle) % Math.PI)
+
+fun main(args: Array<String>) {
+    for (i in 0..100) println("$i      ${lineByPoints(Point(0.0, 0.0), Point(100.0 - i, 0.0 + i)).angle}")
+    for (i in 0..100) println("$i      ${lineByPoints(Point(0.0, 0.0), Point(0.0 - i, 100.0 - i)).angle}")
+    for (i in 0..100) println("$i      ${lineByPoints(Point(0.0, 0.0), Point(-100.0 + i, 0.0 - i)).angle}")
+    for (i in 0..100) println("$i      ${lineByPoints(Point(0.0, 0.0), Point(0.0 + i, -100.0 + i)).angle}")
+}
 
 /**
  * Средняя

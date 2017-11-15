@@ -1,9 +1,7 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson6.task2
 
-import lesson6.task1.Triangle
-
-val name = "abcdefgh"
+val columnName = "abcdefgh"
 
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
@@ -25,7 +23,7 @@ data class Square(val column: Int, val row: Int) {
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку
      */
-    fun notation(): String = if (inside()) "${name[column - 1]}$row" else ""
+    fun notation(): String = if (this.inside()) "${columnName[column - 1]}$row" else ""
 
     override fun equals(other: Any?) = other is Square && column == other.column && row == other.row
 
@@ -43,10 +41,12 @@ data class Square(val column: Int, val row: Int) {
  * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
  * Если нотация некорректна, бросить IllegalArgumentException
  */
-fun square(notation: String): Square =
-        if (notation.length == 2 && notation[0] in name && notation[1].toString().toInt() in 1..8)
-            Square(name.indexOf(notation[0]) + 1, notation[1].toString().toInt())
-        else throw IllegalArgumentException()
+fun square(notation: String): Square {
+    val row = notation[1].toString().toInt()
+    if (notation.length == 2 && notation[0] in columnName && row in 1..8)
+        return Square(columnName.indexOf(notation[0]) + 1, row)
+    else throw IllegalArgumentException()
+}
 
 /**
  * Простая
@@ -152,13 +152,15 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = when (bishopMov
     -1 -> listOf()
     0 -> listOf(start)
     1 -> listOf(start, end)
-    2 -> { if ((end.column + start.column + Math.abs(start.row - end.row)) / 2 > 8 ||
-               (start.row + end.row + Math.abs(start.column - end.column)) / 2 > 8)
-               listOf(start, Square((end.column + start.column - Math.abs(start.row - end.row)) / 2,
-                                    (start.row + end.row - Math.abs(start.column - end.column)) / 2), end)
-           else listOf(start, Square((end.column + start.column + Math.abs(start.row - end.row)) / 2,
-                                     (start.row + end.row + Math.abs(start.column - end.column)) / 2), end)
-         }
+    2 -> {
+        val deltaColumn = Math.abs(end.column - start.column)
+        val deltaRow = Math.abs(end.row - start.row)
+        val middle = Square((start.column + end.column - deltaRow) / 2,
+                            (end.row + start.row - deltaColumn) / 2)
+        if (middle.inside()) listOf(start, middle, end)
+        else listOf(start, Square(middle.column + deltaRow,
+                                  middle.row + deltaColumn), end)
+    }
     else -> throw Exception()
 }
 
@@ -200,7 +202,20 @@ fun kingMoveNumber(start: Square, end: Square): Int =
  *          kingTrajectory(Square(3, 5), Square(6, 2)) = listOf(Square(3, 5), Square(4, 4), Square(5, 3), Square(6, 2))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun kingTrajectory(start: Square, end: Square): List<Square> {
+    val trajectory = mutableListOf(start)
+    var column = start.column
+    var row = start.row
+    while (end.column - column != 0 && end.row - row != 0) {
+        column += (end.column - column) / Math.abs(end.column - column)
+        row += (end.row - row) / Math.abs(end.row - row)
+        trajectory.add(Square(column, row))
+    }
+    if (end.column - column == 0) for (i in 1..Math.abs(end.row - row)) trajectory.add(Square(column, row + i))
+    else for (i in 1..Math.abs(end.column - column)) trajectory.add(Square(column + 1, row))
+    return trajectory
+}
+
 
 /**
  * Сложная
