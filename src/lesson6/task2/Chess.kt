@@ -1,7 +1,7 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson6.task2
 
-val columnName = "abcdefgh"
+val columnIndex = "abcdefgh"
 
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
@@ -23,7 +23,7 @@ data class Square(val column: Int, val row: Int) {
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку
      */
-    fun notation(): String = if (this.inside()) "${columnName[column - 1]}$row" else ""
+    fun notation(): String = if (this.inside()) "${columnIndex[column - 1]}$row" else ""
 
     override fun equals(other: Any?) = other is Square && column == other.column && row == other.row
 
@@ -42,10 +42,19 @@ data class Square(val column: Int, val row: Int) {
  * Если нотация некорректна, бросить IllegalArgumentException
  */
 fun square(notation: String): Square {
-    val row = notation[1].toString().toInt()
-    if (notation.length == 2 && notation[0] in columnName && row in 1..8)
-        return Square(columnName.indexOf(notation[0]) + 1, row)
-    else throw IllegalArgumentException()
+    try {
+        when {
+            notation.length != 2 -> IllegalArgumentException()
+            else -> {
+                val row = notation[1].toString().toInt()
+                if (notation[0] in columnIndex && row in 1..8)
+                    return Square(columnIndex.indexOf(notation[0]) + 1, row)
+                else throw IllegalArgumentException()
+            }
+        }
+    }
+    catch (e: NumberFormatException) { throw IllegalArgumentException() }
+    throw Exception()
 }
 
 /**
@@ -153,17 +162,27 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = when (bishopMov
     0 -> listOf(start)
     1 -> listOf(start, end)
     2 -> {
-        val deltaColumn = Math.abs(end.column - start.column)
-        val deltaRow = Math.abs(end.row - start.row)
+        val lengthColumn = Math.abs(end.column - start.column)
+        val lengthRow = Math.abs(end.row - start.row)
+        val deltaColumn = end.column - start.column
+        val deltaRow = end.row - start.row
         var i = 1
-        val j = 1
-        if (deltaRow - deltaColumn < 0) i = -1
-        val middle = Square((start.column + end.column + i * deltaRow) / 2,
-                (end.row + start.row + j * deltaColumn) / 2)
+        var j = 1
+        if (lengthRow - lengthColumn < 0 && lengthRow > 0) {
+            i = if (start.column < end.column) -deltaRow / lengthRow
+                else deltaRow / lengthRow
+            j = 1
+        }
+        if ((lengthRow - lengthColumn > 0 && lengthColumn > 0)) {
+            i = 1
+            j = if (start.row < end.row) deltaColumn / lengthColumn
+            else -deltaColumn / lengthColumn
+        }
+        val middle = Square((start.column + end.column + i * lengthRow) / 2,
+                (end.row + start.row + j * lengthColumn) / 2)
         if (middle.inside()) listOf(start, middle, end)
-        else listOf(start, Square(middle.column + -i * deltaRow,
-                middle.row + -j * deltaColumn), end)
-
+        else listOf(start, Square(middle.column - i * lengthRow,
+                middle.row - j * lengthColumn), end)
         }
     else -> throw Exception()
 }
