@@ -168,8 +168,8 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = when (bishopMov
         var i = 1
         var j = 1
         if (lengthRow - lengthColumn < 0 && lengthRow > 0) {
-            i = if (start.column < end.column) -deltaRow / lengthRow
-                else deltaRow / lengthRow
+            i = if (start.column < end.column) deltaRow / lengthRow
+                else -deltaRow / lengthRow
             j = 1
         }
         if ((lengthRow - lengthColumn > 0 && lengthColumn > 0)) {
