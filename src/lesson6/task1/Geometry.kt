@@ -198,13 +198,6 @@ fun lineByPoints(a: Point, b: Point): Line = when {
 fun bisectorByPoints(a: Point, b: Point): Line =
         Line(Point((a.x + b.x) / 2, (a.y + b.y) / 2), (Math.PI / 2 + lineByPoints(a, b).angle) % Math.PI)
 
-fun main(args: Array<String>) {
-    for (i in 0..100) println("$i      ${lineByPoints(Point(0.0, 0.0), Point(100.0 - i, 0.0 + i)).angle}")
-    for (i in 0..100) println("$i      ${lineByPoints(Point(0.0, 0.0), Point(0.0 - i, 100.0 - i)).angle}")
-    for (i in 0..100) println("$i      ${lineByPoints(Point(0.0, 0.0), Point(-100.0 + i, 0.0 - i)).angle}")
-    for (i in 0..100) println("$i      ${lineByPoints(Point(0.0, 0.0), Point(0.0 + i, -100.0 + i)).angle}")
-}
-
 /**
  * Средняя
  *

@@ -155,12 +155,16 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = when (bishopMov
     2 -> {
         val deltaColumn = Math.abs(end.column - start.column)
         val deltaRow = Math.abs(end.row - start.row)
-        val middle = Square((start.column + end.column - deltaRow) / 2,
-                            (end.row + start.row - deltaColumn) / 2)
+        var i = 1
+        val j = 1
+        if (deltaRow - deltaColumn < 0) i = -1
+        val middle = Square((start.column + end.column + i * deltaRow) / 2,
+                (end.row + start.row + j * deltaColumn) / 2)
         if (middle.inside()) listOf(start, middle, end)
-        else listOf(start, Square(middle.column + deltaRow,
-                                  middle.row + deltaColumn), end)
-    }
+        else listOf(start, Square(middle.column + -i * deltaRow,
+                middle.row + -j * deltaColumn), end)
+
+        }
     else -> throw Exception()
 }
 
@@ -206,16 +210,28 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
     val trajectory = mutableListOf(start)
     var column = start.column
     var row = start.row
+    var deltaColumn = end.column - column
+    var deltaRow = end.row - row
+    var columnVector: Int
+    var rowVector: Int
+    columnVector = if (deltaColumn == 0) 0 else deltaColumn / Math.abs(deltaColumn)
+    rowVector = if (deltaRow == 0) 0 else deltaRow / Math.abs(deltaRow)
     while (end.column - column != 0 && end.row - row != 0) {
-        column += (end.column - column) / Math.abs(end.column - column)
-        row += (end.row - row) / Math.abs(end.row - row)
+        column += columnVector
+        row += rowVector
         trajectory.add(Square(column, row))
     }
-    if (end.column - column == 0) for (i in 1..Math.abs(end.row - row)) trajectory.add(Square(column, row + i))
-    else for (i in 1..Math.abs(end.column - column)) trajectory.add(Square(column + 1, row))
+    deltaColumn = end.column - column
+    deltaRow = end.row - row
+    when {
+        deltaColumn == 0 && deltaRow == 0 -> return trajectory
+        deltaColumn == 0 -> { columnVector = 0; rowVector = (deltaRow) / Math.abs(deltaRow) }
+        else -> { columnVector = (deltaColumn) / Math.abs(deltaColumn); rowVector = 0 }
+    }
+    for (i in 1..Math.max(Math.abs(deltaColumn), Math.abs(deltaRow)))
+        trajectory.add(Square(column + columnVector * i, row + rowVector * i))
     return trajectory
 }
-
 
 /**
  * Сложная
