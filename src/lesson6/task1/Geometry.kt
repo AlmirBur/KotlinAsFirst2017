@@ -83,7 +83,7 @@ data class Circle(val center: Point, val radius: Double) {
      *
      * Вернуть true, если и только если окружность содержит данную точку НА себе или ВНУТРИ себя
      */
-    fun contains(p: Point): Boolean = center.distance(p) - radius < 0.02
+    fun contains(p: Point): Boolean = center.distance(p) - radius < 1e-10
 }
 
 /**
@@ -250,7 +250,7 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
  * соединяющий две самые удалённые точки в данном множестве.
  */
 fun pointsInCircle (circle: Circle, points: Array<out Point>): Boolean {
-    for (i in 0 until points.size) if (points[i].distance(circle.center) - circle.radius > 0.02) { return false }
+    for (i in 0 until points.size) if (points[i].distance(circle.center) - circle.radius > 1e-10) { return false }
     return true
 }
 
