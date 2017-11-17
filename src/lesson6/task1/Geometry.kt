@@ -2,7 +2,6 @@
 package lesson6.task1
 
 import lesson1.task1.sqr
-import java.lang.IllegalArgumentException
 import java.lang.Math.sin
 import java.lang.Math.cos
 
@@ -84,7 +83,7 @@ data class Circle(val center: Point, val radius: Double) {
      *
      * Вернуть true, если и только если окружность содержит данную точку НА себе или ВНУТРИ себя
      */
-    fun contains(p: Point): Boolean = center.distance(p) <= radius
+    fun contains(p: Point): Boolean = center.distance(p) - radius < 0.02
 }
 
 /**
@@ -231,7 +230,13 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  * (построить окружность по трём точкам, или
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
-fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = TODO()
+fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
+    val ab = bisectorByPoints(a, b)
+    val bc = bisectorByPoints(b, c)
+    val center = ab.crossPoint(bc)
+    val radius = center.distance(a)
+    return Circle(center, radius)
+}
 
 /**
  * Очень сложная
@@ -244,5 +249,44 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = TODO()
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
-fun minContainingCircle(vararg points: Point): Circle = TODO()
+fun pointsInCircle (circle: Circle, points: Array<out Point>): Boolean {
+    for (i in 0 until points.size) if (points[i].distance(circle.center) - circle.radius > 0.02) { return false }
+    return true
+}
+
+fun minContainingCircle(vararg points: Point): Circle = when {
+    points.isEmpty() -> throw IllegalArgumentException()
+    points.size == 1 -> Circle(points[0], 0.0)
+    else -> {
+        var first = points[points.size - 2]
+        var second = points.last()
+        var max = second.distance(first)
+        var min = Double.MAX_VALUE
+        for (i in 0..points.size - 3) {
+            for (j in i + 1 until points.size) {
+                if (points[j].distance(points[i]) > max) {
+                    max = points[j].distance(points[i])
+                    second = points[j]
+                }
+            }
+            if (second.distance(points[i]) == max) first = points[i]
+        }
+        var circle = circleByDiameter(Segment(first, second))
+        if (pointsInCircle(circle, points)) circle
+        else {
+            for (i in 0..points.size - 3) for (j in i + 1..points.size - 2) {
+                val bisector = bisectorByPoints(points[i], points[j])
+                for (k in j + 1 until points.size) {
+                    val center = bisector.crossPoint(bisectorByPoints(points[j], points[k]))
+                    val c = Circle(bisector.crossPoint(bisectorByPoints(points[j], points[k])), center.distance(points[k]))
+                    if (pointsInCircle(c, points) && c.radius < min) {
+                        min = c.radius
+                        circle = c
+                    }
+                }
+            }
+            circle
+        }
+    }
+}
 
