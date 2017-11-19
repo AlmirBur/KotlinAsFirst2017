@@ -258,22 +258,10 @@ fun minContainingCircle(vararg points: Point): Circle = when {
     points.isEmpty() -> throw IllegalArgumentException()
     points.size == 1 -> Circle(points[0], 0.0)
     else -> {
-        var first = points[points.size - 2]
-        var second = points.last()
-        var max = second.distance(first)
-        var min = Double.MAX_VALUE
-        for (i in 0..points.size - 3) {
-            for (j in i + 1 until points.size) {
-                if (points[j].distance(points[i]) > max) {
-                    max = points[j].distance(points[i])
-                    second = points[j]
-                }
-            }
-            if (second.distance(points[i]) == max) first = points[i]
-        }
-        var circle = circleByDiameter(Segment(first, second))
+        var circle = circleByDiameter(diameter(*points))
         if (pointsInCircle(circle, points)) circle
         else {
+            var min = Double.MAX_VALUE
             for (i in 0..points.size - 3) for (j in i + 1..points.size - 2) {
                 val bisector = bisectorByPoints(points[i], points[j])
                 for (k in j + 1 until points.size) {

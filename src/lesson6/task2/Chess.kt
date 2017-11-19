@@ -1,6 +1,8 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson6.task2
 
+import lesson3.task1.powInt
+
 val columnIndex = "abcdefgh"
 
 /**
@@ -274,7 +276,72 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
-fun knightMoveNumber(start: Square, end: Square): Int = TODO()
+class Graph {
+    private data class Vertex(val name: Square) {
+        val neighbors = mutableSetOf<Vertex>()
+    }
+
+    private val vertices = mutableMapOf<Square, Vertex>()
+
+    private operator fun get(name: Square) = vertices[name] ?: throw IllegalArgumentException()
+
+    fun addVertex(name: Square) {
+        vertices[name] = Vertex(name)
+    }
+
+    private fun connect(first: Vertex, second: Vertex) {
+        second.neighbors.add(first)
+    }
+
+    fun connect(first: Square, second: Square) = connect(this[first], this[second])
+
+    fun neighbors(name: Square) = vertices[name]?.neighbors?.map { it.name } ?: listOf()
+
+    fun bfs(start: Square, finish: Square) = bfs(vertices[start]!!, vertices[finish]!!)
+
+    private fun bfs(start: Vertex, finish: Vertex): Int {
+        val queue = mutableListOf<Vertex>()
+        queue.add(start)
+        val visited = mutableMapOf(start to 0)
+        while (queue.isNotEmpty()) {
+            val next = queue[0]
+            queue.removeAt(0)
+            val distance = visited[next]!! + 1
+            var newNB: Square
+            for (i in 0..7) {
+                newNB = Square(next.name.column + 2 * powInt(-1, i / 2) * (i / 4 - 1) + powInt(-1, i) * (i / 4),
+                                  next.name.row + 2 * powInt(-1, i / 2) * (i / 4) + powInt(-1, i) * (i / 4 - 1))
+                if (newNB.inside() && vertices[newNB] !in visited) {
+                    this.addVertex(newNB)
+                    this.connect(next, vertices[newNB]!!)
+                    if (vertices[newNB] in visited) continue
+                    visited.put(vertices[newNB]!!, distance)
+                    queue.add(vertices[newNB]!!)
+                    if (vertices[newNB] == finish) { lastDistance = distance; return distance }
+                }
+            }
+        }
+        return -1
+    }
+
+    var lastDistance = -1
+
+}
+
+var f = Graph()
+
+fun knightMoveNumber(start: Square, end: Square): Int = when {
+    !(start.inside() && end.inside()) -> throw IllegalArgumentException()
+    start == end -> 0
+    else -> {
+        val g = Graph()
+        g.addVertex(start)
+        g.addVertex(end)
+        val distance = g.bfs(start, end)
+        f = g
+        distance
+    }
+}
 
 /**
  * Очень сложная
@@ -296,4 +363,16 @@ fun knightMoveNumber(start: Square, end: Square): Int = TODO()
  *
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun knightTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun knightTrajectory(start: Square, end: Square): List<Square> = when (knightMoveNumber(start, end)) {
+    0 -> listOf(start)
+    else -> {
+        val trajectory = mutableListOf(end)
+        var tempSquare = end
+        val g = f
+        for (i in 0 until g.lastDistance) {
+            tempSquare = g.neighbors(tempSquare)[0]
+            trajectory.add(0, tempSquare)
+        }
+        trajectory
+    }
+}
