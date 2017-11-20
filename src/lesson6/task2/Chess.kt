@@ -170,14 +170,12 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = when (bishopMov
         var i = 1
         var j = 1
         if (lengthRow - lengthColumn < 0 && lengthRow > 0) {
-            i = if (start.column < end.column) deltaRow / lengthRow
-                else -deltaRow / lengthRow
+            i = if (start.column < end.column) deltaRow / lengthRow else -deltaRow / lengthRow
             j = 1
         }
-        if ((lengthRow - lengthColumn > 0 && lengthColumn > 0)) {
+        if (lengthRow - lengthColumn > 0 && lengthColumn > 0) {
             i = 1
-            j = if (start.row < end.row) deltaColumn / lengthColumn
-            else -deltaColumn / lengthColumn
+            j = if (start.row < end.row) deltaColumn / lengthColumn else -deltaColumn / lengthColumn
         }
         val middle = Square((start.column + end.column + i * lengthRow) / 2,
                 (end.row + start.row + j * lengthColumn) / 2)
@@ -232,10 +230,8 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
     var row = start.row
     var deltaColumn = end.column - column
     var deltaRow = end.row - row
-    var columnVector: Int
-    var rowVector: Int
-    columnVector = if (deltaColumn == 0) 0 else deltaColumn / Math.abs(deltaColumn)
-    rowVector = if (deltaRow == 0) 0 else deltaRow / Math.abs(deltaRow)
+    var columnVector = if (deltaColumn == 0) 0 else deltaColumn / Math.abs(deltaColumn)
+    var rowVector = if (deltaRow == 0) 0 else deltaRow / Math.abs(deltaRow)
     while (end.column - column != 0 && end.row - row != 0) {
         column += columnVector
         row += rowVector
@@ -245,7 +241,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
     deltaRow = end.row - row
     when {
         deltaColumn == 0 && deltaRow == 0 -> return trajectory
-        deltaColumn == 0 -> { columnVector = 0; rowVector = (deltaRow) / Math.abs(deltaRow) }
+        deltaColumn == 0 -> { columnVector = 0; rowVector = deltaRow / Math.abs(deltaRow) }
         else -> { columnVector = (deltaColumn) / Math.abs(deltaColumn); rowVector = 0 }
     }
     for (i in 1..Math.max(Math.abs(deltaColumn), Math.abs(deltaRow)))
@@ -314,7 +310,6 @@ class Graph {
                 if (newNB.inside() && vertices[newNB] !in visited) {
                     this.addVertex(newNB)
                     this.connect(next, vertices[newNB]!!)
-                    if (vertices[newNB] in visited) continue
                     visited.put(vertices[newNB]!!, distance)
                     queue.add(vertices[newNB]!!)
                     if (vertices[newNB] == finish) { lastDistance = distance; return distance }
@@ -324,11 +319,10 @@ class Graph {
         return -1
     }
 
-    var lastDistance = -1
-
 }
 
 var f = Graph()
+var lastDistance = -1
 
 fun knightMoveNumber(start: Square, end: Square): Int = when {
     !(start.inside() && end.inside()) -> throw IllegalArgumentException()
@@ -368,9 +362,8 @@ fun knightTrajectory(start: Square, end: Square): List<Square> = when (knightMov
     else -> {
         val trajectory = mutableListOf(end)
         var tempSquare = end
-        val g = f
-        for (i in 0 until g.lastDistance) {
-            tempSquare = g.neighbors(tempSquare)[0]
+        for (i in 0 until lastDistance) {
+            tempSquare = f.neighbors(tempSquare)[0]
             trajectory.add(0, tempSquare)
         }
         trajectory
