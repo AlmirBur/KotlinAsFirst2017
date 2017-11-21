@@ -312,17 +312,13 @@ class Graph {
                     this.connect(next, vertices[newNB]!!)
                     visited.put(vertices[newNB]!!, distance)
                     queue.add(vertices[newNB]!!)
-                    if (vertices[newNB] == finish) { lastDistance = distance; return distance }
+                    if (vertices[newNB] == finish) return distance
                 }
             }
         }
         return -1
     }
-
 }
-
-var f = Graph()
-var lastDistance = -1
 
 fun knightMoveNumber(start: Square, end: Square): Int = when {
     !(start.inside() && end.inside()) -> throw IllegalArgumentException()
@@ -331,9 +327,7 @@ fun knightMoveNumber(start: Square, end: Square): Int = when {
         val g = Graph()
         g.addVertex(start)
         g.addVertex(end)
-        val distance = g.bfs(start, end)
-        f = g
-        distance
+        g.bfs(start, end)
     }
 }
 
@@ -357,13 +351,17 @@ fun knightMoveNumber(start: Square, end: Square): Int = when {
  *
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun knightTrajectory(start: Square, end: Square): List<Square> = when (knightMoveNumber(start, end)) {
-    0 -> listOf(start)
+fun knightTrajectory(start: Square, end: Square): List<Square> = when {
+    !(start.inside() && end.inside()) -> throw IllegalArgumentException()
+    start == end -> listOf(start)
     else -> {
+        val g = Graph()
+        g.addVertex(start)
+        g.addVertex(end)
         val trajectory = mutableListOf(end)
         var tempSquare = end
-        for (i in 0 until lastDistance) {
-            tempSquare = f.neighbors(tempSquare)[0]
+        for (i in 0 until g.bfs(start, end)) {
+            tempSquare = g.neighbors(tempSquare)[0]
             trajectory.add(0, tempSquare)
         }
         trajectory
