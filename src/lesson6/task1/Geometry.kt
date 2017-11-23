@@ -84,6 +84,11 @@ data class Circle(val center: Point, val radius: Double) {
      * Вернуть true, если и только если окружность содержит данную точку НА себе или ВНУТРИ себя
      */
     fun contains(p: Point): Boolean = center.distance(p) - radius < 1e-10
+
+    fun pointsInCircle(points: Array<out Point>): Boolean {
+        for (point in points) if (!this.contains(point)) return false
+        return true
+    }
 }
 
 /**
@@ -208,15 +213,13 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
     var first = Circle(Point(0.0, 0.0), 0.0)
     var second = Circle(Point(0.0, 0.0), 0.0)
     var min = Double.MAX_VALUE
-    for (i in 0..circles.size - 2) {
-        for (j in i + 1 until circles.size) when (circles[i].distance(circles[j])) {
-            0.0 -> return Pair(circles[i], circles[j])
-            in Double.MIN_VALUE..min -> {
-                min = circles[i].distance(circles[j])
-                second = circles[j]
-            }
+    for (i in 0..circles.size - 2) for (j in i + 1 until circles.size) when (circles[i].distance(circles[j])) {
+        0.0 -> return Pair(circles[i], circles[j])
+        in 0.0..min -> {
+            min = circles[i].distance(circles[j])
+            first = circles[i]
+            second = circles[j]
         }
-        if (circles[i].distance(second) == min) first = circles[i]
     }
     if (min == Double.MAX_VALUE) throw IllegalArgumentException()
     else return Pair(first, second)
@@ -263,10 +266,8 @@ fun minContainingCircle(vararg points: Point): Circle = when {
                 val bisector = bisectorByPoints(points[i], points[j])
                 for (k in j + 1 until points.size) {
                     val center = bisector.crossPoint(bisectorByPoints(points[j], points[k]))
-                    val c = Circle(bisector.crossPoint(bisectorByPoints(points[j], points[k])), center.distance(points[k]))
-                    logic = true
-                    for (point in points) if (!c.contains(point)) { logic = false; break }
-                    if (logic && c.radius < min) {
+                    val c = Circle(center, center.distance(points[k]))
+                    if (c.pointsInCircle(points) && c.radius < min) {
                         min = c.radius
                         circle = c
                     }
@@ -276,4 +277,3 @@ fun minContainingCircle(vararg points: Point): Circle = when {
         }
     }
 }
-

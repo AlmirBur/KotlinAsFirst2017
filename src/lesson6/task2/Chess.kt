@@ -362,8 +362,9 @@ fun knightTrajectory(start: Square, end: Square): List<Square> = when {
         var tempSquare = end
         for (i in 0 until g.bfs(start, end)) {
             tempSquare = g.neighbors(tempSquare)[0]
-            trajectory.add(0, tempSquare)
+            trajectory.add(tempSquare)
         }
+        trajectory.reverse()
         trajectory
     }
 }
