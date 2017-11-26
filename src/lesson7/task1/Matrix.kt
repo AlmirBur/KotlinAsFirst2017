@@ -38,7 +38,9 @@ interface Matrix<E> {
  * height = высота, width = ширина, e = чем заполнить элементы.
  * Бросить исключение IllegalArgumentException, если height или width <= 0.
  */
-fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> = MatrixImpl(height, width, e)
+fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> =
+        if (height < 1 || width < 1) throw IllegalArgumentException()
+        else MatrixImpl(height, width, e)
 
 /**
  * Средняя сложность

@@ -65,7 +65,7 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
 fun generateSpiral(height: Int, width: Int): Matrix<Int> {
     val result = MatrixImpl(height, width, 0)
     var counter = 1
-    for (i in 0 until Math.max(height, width) - Math.max(height, width) / 2) {
+    for (i in 0 until Math.min(height, width) - Math.min(height, width) / 2) {
         for (j in 0..3) {
             when (j) {
                 0 -> for (k in i until width - i) { result[i, k] = counter; counter++ }
@@ -95,7 +95,7 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> {
  */
 fun generateRectangles(height: Int, width: Int): Matrix<Int> {
     val result = MatrixImpl(height, width, 1)
-    for (i in 1 until Math.max(height, width) - Math.max(height, width) / 2) {
+    for (i in 1 until Math.min(height, width) - Math.min(height, width) / 2) {
         for (j in i until width - i) result[i, j] = i + 1
         for (j in i + 1 until height - i) result[j, width - 1 - i] = i + 1
         for (j in width - 2 - i downTo i) result[height - 1 - i, j] = i + 1
