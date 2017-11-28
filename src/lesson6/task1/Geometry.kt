@@ -85,7 +85,7 @@ data class Circle(val center: Point, val radius: Double) {
      */
     fun contains(p: Point): Boolean = center.distance(p) - radius < 1e-10
 
-    fun pointsInCircle(points: Array<out Point>): Boolean {
+    fun contains(points: Array<out Point>): Boolean {
         for (point in points) if (!this.contains(point)) return false
         return true
     }
@@ -257,9 +257,7 @@ fun minContainingCircle(vararg points: Point): Circle = when {
     points.size == 1 -> Circle(points[0], 0.0)
     else -> {
         var circle = circleByDiameter(diameter(*points))
-        var logic = true
-        for (point in points) if (!circle.contains(point)) { logic = false; break }
-        if (logic) circle
+        if (circle.contains(points)) circle
         else {
             var min = Double.MAX_VALUE
             for (i in 0..points.size - 3) for (j in i + 1..points.size - 2) {
@@ -267,7 +265,7 @@ fun minContainingCircle(vararg points: Point): Circle = when {
                 for (k in j + 1 until points.size) {
                     val center = bisector.crossPoint(bisectorByPoints(points[j], points[k]))
                     val c = Circle(center, center.distance(points[k]))
-                    if (c.pointsInCircle(points) && c.radius < min) {
+                    if (c.contains(points) && c.radius < min) {
                         min = c.radius
                         circle = c
                     }

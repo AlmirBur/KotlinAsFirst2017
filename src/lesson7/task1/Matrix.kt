@@ -51,7 +51,7 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
     private val map = mutableMapOf<Cell, E>()
 
     init {
-        for (i in 0 until height) for (j in 0 until  width)
+        for (i in 0 until height) for (j in 0 until width)
         map[Cell(i, j)] = e
     }
 
@@ -66,14 +66,13 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
 
     override fun set(cell: Cell, value: E) = set(cell.row, cell.column, value)
 
-    fun valueEquals(other: Any?): Boolean {
-        if (other is Matrix<*>)
-        for (i in 0 until height) for (j in 0 until width) if (other[i, j] != this[i, j]) return false
-        return true
-    }
-
     override fun equals(other: Any?) =
-            other is Matrix<*> && height == other.height && width == other.width && valueEquals(other)
+            if (other is Matrix<*> && height == other.height && width == other.width) {
+                var log = true
+                for (i in 0 until height) for (j in 0 until width) if (other[i, j] != this[i, j]) {log = false; break}
+                log
+            } else false
+
 
     override fun hashCode(): Int {
         var result = height
