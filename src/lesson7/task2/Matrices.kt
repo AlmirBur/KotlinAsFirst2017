@@ -121,13 +121,11 @@ fun generateRectangles(height: Int, width: Int): Matrix<Int> {
 fun generateSnake(height: Int, width: Int): Matrix<Int> {
     val result = MatrixImpl(height, width, 0)
     var counter = 1
-    for (i in 0..height + width - 2) {
-        for (j in 0 until  height) {
-            if (j > height - 1 ||  i - j !in 0 until width) continue
-            result[j, i - j] = counter
-            counter++
-            }
-        }
+    for (i in 0..height + width - 2) for (j in 0 until  height) {
+        if (j > height - 1 ||  i - j !in 0 until width) continue
+        result[j, i - j] = counter
+        counter++
+    }
     return result
 }
 
@@ -146,7 +144,7 @@ fun <E> rotate(matrix: Matrix<E>): Matrix<E> = when {
     matrix.height != matrix.width -> throw IllegalArgumentException()
     matrix.height < 1 || matrix.width < 1 -> matrix
     else -> {
-        val result = createMatrix(matrix.height, matrix.width, matrix[0, 0])
+        val result = MatrixImpl(matrix.height, matrix.width, matrix[0, 0])
         for (i in 0 until result.height) for (j in 0 until result.width) result[i,j] = matrix[matrix.height - 1 - j, i]
         result
     }
