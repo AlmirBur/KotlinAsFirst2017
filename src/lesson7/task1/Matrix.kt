@@ -50,10 +50,7 @@ fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> =
 class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : Matrix<E> {
     private val map = mutableMapOf<Cell, E>()
 
-    init {
-        for (i in 0 until height) for (j in 0 until width)
-        map[Cell(i, j)] = e
-    }
+    init { for (i in 0 until height) for (j in 0 until width) map[Cell(i, j)] = e }
 
     override fun get(row: Int, column: Int): E  = get(Cell(row, column))
 
@@ -66,12 +63,11 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
 
     override fun set(cell: Cell, value: E) = set(cell.row, cell.column, value)
 
-    override fun equals(other: Any?) =
-            if (other is Matrix<*> && height == other.height && width == other.width) {
-                var log = true
-                for (i in 0 until height) for (j in 0 until width) if (other[i, j] != this[i, j]) {log = false; break}
-                log
-            } else false
+    override fun equals(other: Any?) = if (other is Matrix<*> && height == other.height && width == other.width) {
+        var log = true
+        for (i in 0 until height) for (j in 0 until width) if (other[i, j] != this[i, j]) {log = false; break}
+        log
+    } else false
 
 
     override fun hashCode(): Int {
