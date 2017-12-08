@@ -5,7 +5,6 @@ import lesson7.task1.Cell
 import lesson7.task1.Matrix
 import lesson7.task1.MatrixImpl
 import lesson7.task1.createMatrix
-import java.util.*
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
 
@@ -363,10 +362,11 @@ operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> = when {
  * 3 10 11  8
  */
 fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
-    val list = MutableList(16) { Cell(0, 0) }
+    val num = matrix.height * matrix.width
+    val list = MutableList(num) { Cell(0, 0) }
     for (i in 0 until matrix.height) for (j in 0 until matrix.width) list[matrix[i, j]] = Cell(i, j)
     for (i in 0 until moves.size) {
-        if (moves[i] !in 1..15) throw IllegalStateException()
+        if (moves[i] !in 1 until num) throw IllegalStateException()
         else {
             val deltaColumn = Math.abs(list[moves[i]].column - list[0].column)
             val deltaRow = Math.abs(list[moves[i]].row - list[0].row)

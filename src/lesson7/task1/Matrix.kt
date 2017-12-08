@@ -64,10 +64,11 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
     override fun set(cell: Cell, value: E) = set(cell.row, cell.column, value)
 
     override fun equals(other: Any?) = if (other is Matrix<*> && height == other.height && width == other.width) {
-        var log = true
-        for (i in 0 until height) for (j in 0 until width) if (other[i, j] != this[i, j]) {log = false; break}
-        log
-    } else false
+        var result = true
+        for (i in 0 until height) for (j in 0 until width) if (other[i, j] != this[i, j]) {result = false; break}
+        result
+    }
+    else false
 
 
     override fun hashCode(): Int {
