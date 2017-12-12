@@ -5,6 +5,7 @@ import lesson7.task1.Cell
 import lesson7.task1.Matrix
 import lesson7.task1.MatrixImpl
 import lesson7.task1.createMatrix
+import java.util.*
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
 
@@ -424,8 +425,8 @@ fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
  */
 fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> {
     val steps0 = listOf('d', 'l', 'l', 'u', 'r')
-    val steps123 = listOf('u', 'l', 'l', 'd', 'r')
-    val stepColumnEquals0 = listOf('r', 'u', 'u', 'l', 'd')
+    val steps1 = listOf('u', 'l', 'l', 'd', 'r')
+    val steps2 = listOf('r', 'u', 'u', 'l', 'd')
     var trajectory = listOf<Int>()
     val keys = MutableList(matrix.height * matrix.width) { Cell(0, 0) }
     for (i in 0 until matrix.height) for (j in 0 until matrix.width) keys[matrix[i, j]] = Cell(i, j)
@@ -436,21 +437,21 @@ fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> {
                 val upDown = if (keys[k].row == l + 1) 'd' else 'u'
                 for (j in 0 until keys[0].column - keys[k].column) {
                     trajectory += matrix.change(keys, List(keys[k].row - keys[0].row) { 'd' } +
-                            List(keys[0].column - keys[k].column) { 'l' } + upDown)
+                                                            List(keys[0].column - keys[k].column) { 'l' } + upDown)
                     trajectory += matrix.change(keys, List((k - 1) % matrix.width - keys[0].column)
-                    { 'r' } + List(keys[0].row - l) { 'u' })
+                                                            { 'r' } + List(keys[0].row - l) { 'u' })
                 }
             }
             if (keys[k].column != (k - 1) % matrix.width) {
                 trajectory += matrix.change(keys, List(keys[k].row - keys[0].row) { 'd' } +
-                        List(keys[k].column - keys[0].column) { 'r' })
-                val tempSteps = if (keys[k].row == l) steps0 else steps123
+                                                        List(keys[k].column - keys[0].column) { 'r' })
+                val tempSteps = if (keys[k].row == l) steps0 else steps1
                 for (i in k - l * matrix.width..keys[k].column) trajectory += matrix.change(keys, tempSteps)
             }
             if (keys[k].row != l && k % matrix.width != 0) {
                 trajectory += matrix.change(keys, if (keys[0].column > keys[k].column) listOf('u', 'l', 'd')
-                else List(keys[k].row - l) { 'd' })
-                for (i in 0 until keys[k].row - l) trajectory += matrix.change(keys, stepColumnEquals0)
+                                                  else List(keys[k].row - l) { 'd' })
+                for (i in 0 until keys[k].row - l) trajectory += matrix.change(keys, steps2)
                 trajectory += matrix.change(keys, listOf('r', 'u'))
             }
         }
@@ -458,9 +459,9 @@ fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> {
         if (keys[(l + 1) * matrix.width].row == l) continue
         val deltaRow = keys[(l + 1) * matrix.width].row - keys[0].row
         val deltaColumn = keys[(l + 1) * matrix.width].column - keys[0].column
-        val partTrajectory = List(deltaRow) { 'd' } + List(deltaColumn) { 'r' } +
-                List(deltaRow) { 'u' } + List(deltaColumn) { 'l' }
-        for (k in 1..deltaRow + deltaColumn) trajectory += matrix.change(keys, partTrajectory)
+        val partOfTrajectory = List(deltaRow) { 'd' } + List(deltaColumn) { 'r' } +
+                               List(deltaRow) { 'u' } + List(deltaColumn) { 'l' }
+        for (k in 1..deltaRow + deltaColumn) trajectory += matrix.change(keys, partOfTrajectory)
         trajectory += matrix.change(keys, listOf('u', 'r', 'd', 'r', 'u', 'l', 'l', 'd'))
     }
     trajectory += matrix.change(keys, List(keys[0].column) { 'l' })
@@ -471,13 +472,13 @@ fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> {
                 trajectory += matrix.change(keys, listOf('d', 'l', 'u', 'r', 'd', 'r', 'u', 'l', 'l', 'd', 'r', 'u'))
             if (keys[k].column != j + l) {
                 trajectory += matrix.change(keys, List(keys[k].row - keys[0].row) { 'd' } +
-                        List(keys[k].column - keys[0].column) { 'r' })
-                val tempSteps = if (keys[k].row == matrix.height - 2) steps0 else steps123
+                                                        List(keys[k].column - keys[0].column) { 'r' })
+                val tempSteps = if (keys[k].row == matrix.height - 2) steps0 else steps1
                 for (i in j + l until keys[k].column) trajectory += matrix.change(keys, tempSteps)
             }
             if (keys[k].row == matrix.height - 1) {
                 trajectory += matrix.change(keys, if (keys[0].column > keys[k].column) listOf('u', 'l', 'd', 'r', 'u')
-                else listOf('d', 'r', 'u'))
+                                                  else listOf('d', 'r', 'u'))
             }
             k -= matrix.width
         }
@@ -514,7 +515,6 @@ fun Matrix<Int>.change(keys: MutableList<Cell>, moves: List<Char>): MutableList<
     return trajectory
 }
 
-/**    Для проверки
 fun main(args: Array<String>) {
     val value = 100
     val height = Random().nextInt(8) + 3
@@ -555,4 +555,3 @@ fun createRandomMatrix(height: Int, width: Int): Matrix<Int> {
     }
     return matrix
 }
-*/
