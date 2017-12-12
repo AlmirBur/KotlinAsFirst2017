@@ -363,25 +363,25 @@ operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> = when {
  * 3 10 11  8
  */
 fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
-    val num = matrix.height * matrix.width
-    val list = MutableList(num) { Cell(0, 0) }
-    for (i in 0 until matrix.height) for (j in 0 until matrix.width) list[matrix[i, j]] = Cell(i, j)
+    val M = MatrixImpl(matrix.height, matrix.width, 0)
+    for (i in 0 until M.height) for (j in 0 until M.width) { M[i, j] = matrix[i, j]; M[matrix[i, j]] = Cell(i, j) }
+    val num = M.height * M.width
     for (i in 0 until moves.size) {
         if (moves[i] !in 1 until num) throw IllegalStateException()
         else {
-            val deltaColumn = Math.abs(list[moves[i]].column - list[0].column)
-            val deltaRow = Math.abs(list[moves[i]].row - list[0].row)
+            val deltaColumn = Math.abs(M[moves[i]].column - M[0].column)
+            val deltaRow = Math.abs(M[moves[i]].row - M[0].row)
             if (deltaColumn == 1 && deltaRow == 0 || deltaRow == 1 && deltaColumn == 0) {
-                matrix[list[moves[i]]] = 0
-                matrix[list[0]] = moves[i]
-                val x = list[0]
-                list[0] = list[moves[i]]
-                list[moves[i]] = x
+                M[M[0]] = moves[i]
+                M[M[moves[i]]] = 0
+                val x = M[0]
+                M[0] = M[moves[i]]
+                M[moves[i]] = x
             }
             else throw IllegalStateException()
         }
     }
-    return matrix
+    return M
 }
 
 /**
