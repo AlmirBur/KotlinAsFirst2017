@@ -22,6 +22,7 @@ interface Matrix<E> {
      */
     operator fun get(row: Int, column: Int): E
     operator fun get(cell: Cell): E
+    operator fun get(element: Int): Cell
 
     /**
      * Запись в ячейку.
@@ -29,6 +30,7 @@ interface Matrix<E> {
      */
     operator fun set(row: Int, column: Int, value: E)
     operator fun set(cell: Cell, value: E)
+    operator fun set(element: Int, cell: Cell)
 }
 
 /**
@@ -48,20 +50,29 @@ fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> =
  * Реализация интерфейса "матрица"
  */
 class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : Matrix<E> {
-    private val map = mutableMapOf<Cell, E>()
+    private val elements = mutableMapOf<Cell, E>()
 
-    init { for (i in 0 until height) for (j in 0 until width) map[Cell(i, j)] = e }
+    private var keys = mutableListOf<Cell>()
 
-    override fun get(row: Int, column: Int): E  = get(Cell(row, column))
+    init {
+        for (i in 0 until height) for (j in 0 until width) elements[Cell(i, j)] = e
+        keys = MutableList(height * width) { Cell(0, 0) }
+    }
 
-    override fun get(cell: Cell): E  = map[cell] ?: throw IllegalArgumentException()
+    override fun get(row: Int, column: Int): E = get(Cell(row, column))
+
+    override fun get(cell: Cell): E = elements[cell] ?: throw IllegalArgumentException()
+
+    override fun get(element: Int): Cell = keys[element]
 
     override fun set(row: Int, column: Int, value: E) {
         if (row !in 0 until height || column !in 0 until width) throw IllegalArgumentException()
-        else map[Cell(row, column)] = value
+        else elements[Cell(row, column)] = value
     }
 
     override fun set(cell: Cell, value: E) = set(cell.row, cell.column, value)
+
+    override fun set(element: Int, cell: Cell) { keys[element] = cell }
 
     override fun equals(other: Any?) = if (other is Matrix<*> && height == other.height && width == other.width) {
         var result = true
@@ -74,7 +85,7 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
     override fun hashCode(): Int {
         var result = height
         result = 31 * result + width
-        result = 31 * result + map.hashCode()
+        result = 31 * result + elements.hashCode()
         return result
     }
 

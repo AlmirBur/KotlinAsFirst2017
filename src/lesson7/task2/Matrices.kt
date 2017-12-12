@@ -5,6 +5,7 @@ import lesson7.task1.Cell
 import lesson7.task1.Matrix
 import lesson7.task1.MatrixImpl
 import lesson7.task1.createMatrix
+import java.util.*
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
 
@@ -422,4 +423,134 @@ fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
  *
  * Перед решением этой задачи НЕОБХОДИМО решить предыдущую
  */
-fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> = TODO()
+fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> {
+    val steps0 = listOf('d', 'l', 'l', 'u', 'r')
+    val steps123 = listOf('u', 'l', 'l', 'd', 'r')
+    val stepColumnEquals0 = listOf('r', 'u', 'u', 'l', 'd')
+    var trajectory = listOf<Int>()
+    for (i in 0 until matrix.height) for (j in 0 until matrix.width) matrix[matrix[i, j]] = Cell(i, j)
+    for (l in 0 until matrix.height - 2) {
+        trajectory += change(matrix, List(matrix[0].row - l) { 'u' } + List(matrix[0].column) { 'l' })
+        for (k in l * matrix.width + 1..(l + 1) * matrix.width) {
+            if (matrix[k].column < (k - 1) % matrix.width) {
+                val upDown = if (matrix[k].row == l + 1) 'd' else 'u'
+                for (j in 0 until matrix[0].column - matrix[k].column) {
+                    trajectory += change(matrix, List(matrix[k].row - matrix[0].row) { 'd' } +
+                                                        List(matrix[0].column - matrix[k].column) { 'l' } + upDown)
+                    trajectory += change(matrix, List((k - 1) % matrix.width - matrix[0].column)
+                                                                  { 'r' } + List(matrix[0].row - l) { 'u' })
+                }
+            }
+            if (matrix[k].column != (k - 1) % matrix.width) {
+                trajectory += change(matrix, List(matrix[k].row - matrix[0].row) { 'd' } +
+                                                   List(matrix[k].column - matrix[0].column) { 'r' })
+                val tempSteps = if (matrix[k].row == l) steps0 else steps123
+                for (i in k - l * matrix.width..matrix[k].column) trajectory += change(matrix, tempSteps)
+            }
+            if (matrix[k].row != l && k % matrix.width != 0) {
+                trajectory += change(matrix, if (matrix[0].column > matrix[k].column) listOf('u', 'l', 'd')
+                                             else List(matrix[k].row - l) { 'd' })
+                for (i in 0 until matrix[k].row - l) trajectory += change(matrix, stepColumnEquals0)
+                trajectory += change(matrix, listOf('r', 'u'))
+            }
+        }
+        trajectory += change(matrix, listOf('d', 'l', 'l'))
+        if (matrix[(l + 1) * matrix.width].row == l) continue
+        val deltaRow = matrix[(l + 1) * matrix.width].row - matrix[0].row
+        val deltaColumn = matrix[(l + 1) * matrix.width].column - matrix[0].column
+        val partTrajectory = List(deltaRow) { 'd' } + List(deltaColumn) { 'r' } +
+                             List(deltaRow) { 'u' } + List(deltaColumn) { 'l' }
+        for (k in 1..deltaRow + deltaColumn) trajectory += change(matrix, partTrajectory)
+        trajectory += change(matrix, listOf('u', 'r', 'd', 'r', 'u', 'l', 'l', 'd'))
+    }
+    trajectory += change(matrix, List(matrix[0].column) { 'l' })
+    for (l in 0 until matrix.width - 2) {
+        var k = matrix.width * (matrix.height - 1) + 1 + l
+        for (j in 0..1) {
+            if (matrix[k].column < j + l)
+                trajectory += change(matrix, listOf('d', 'l', 'u', 'r', 'd', 'r', 'u', 'l', 'l', 'd', 'r', 'u'))
+            if (matrix[k].column != j + l) {
+                trajectory += change(matrix, List(matrix[k].row - matrix[0].row) { 'd' } +
+                                                    List(matrix[k].column - matrix[0].column) { 'r' })
+                val tempSteps = if (matrix[k].row == matrix.height - 2) steps0 else steps123
+                for (i in j + l until matrix[k].column) trajectory += change(matrix, tempSteps)
+            }
+            if (matrix[k].row == matrix.height - 1) {
+                trajectory += change(matrix, if (matrix[0].column > matrix[k].column) listOf('u', 'l', 'd', 'r', 'u')
+                                             else listOf('d', 'r', 'u'))
+            }
+            k -= matrix.width
+        }
+        trajectory += change(matrix, steps0)
+    }
+    while (matrix[matrix.width * matrix.height - 1] != Cell(matrix.height - 1, matrix.width - 1))
+        trajectory += change(matrix, listOf('r', 'd', 'l', 'u'))
+    trajectory += change(matrix, if (matrix[matrix.height - 1, matrix.width - 2] > matrix[matrix.height - 2, matrix.width - 1])
+        listOf('d', 'l', 'u', 'r', 'd', 'r', 'u', 'l', 'l', 'd', 'r', 'r', 'u', 'l', 'd', 'r') else listOf('d', 'r'))
+    return trajectory
+}
+
+fun change(matrix: Matrix<Int>, moves: List<Char>): List<Int> {
+    val trajectory = mutableListOf<Int>()
+    for (i in 0 until moves.size) {
+        var plusColumn = 0
+        var plusRow = 0
+        when (moves[i]) {
+            'u' -> plusRow = -1    //up
+            'd' -> plusRow = 1     //down
+            'l' -> plusColumn = -1 //left
+            'r' -> plusColumn = 1  //right
+            else -> throw IllegalStateException()
+        }
+        if (matrix[0].row + plusRow !in 0 until matrix.height || matrix[0].column + plusColumn !in 0 until matrix.width)
+            throw IllegalStateException()
+        val digit = matrix[matrix[0].row + plusRow, matrix[0].column + plusColumn]
+        trajectory.add(digit)
+        matrix[matrix[0]] = digit
+        matrix[matrix[digit]] = 0
+        matrix[0] = matrix[digit]
+        matrix[digit] = Cell(matrix[0].row - plusRow, matrix[0].column - plusColumn)
+    }
+    return trajectory
+}
+
+fun main(args: Array<String>) {
+    val value = 100
+    val height = Random().nextInt(8) + 3
+    val width = Random().nextInt(8) + 3
+    val num = height * width
+    var counter = 0
+    val trueMatrix1 = MatrixImpl(height, width, 0)
+    val trueMatrix2 = MatrixImpl(height, width, 0)
+    for (i in 0 until height) for (j in 0 until width) {
+        trueMatrix1[i, j] = i * width + j + 1
+        trueMatrix2[i, j] = i * width + j + 1
+    }
+    trueMatrix1[height - 1, width - 1] = 0
+    trueMatrix2[height - 1, width - 1] = 0
+    trueMatrix2[height - 1, width - 3] = num - 1
+    trueMatrix2[height - 1, width - 2] = num - 2
+    for (i in 1..value) {
+        val matrix = createRandomMatrix(height, width)
+        println(fifteenGameSolution(matrix))
+        if (matrix == trueMatrix1 || matrix == trueMatrix2) counter++
+
+    }
+    if (counter == value) println("Всё верно") else println("Что-то не верно")
+}
+
+fun createRandomMatrix(height: Int, width: Int): Matrix<Int> {
+    val num = height * width
+    val matrix = MatrixImpl(height, width, 0)
+    val list = (0 until num).toMutableList()
+    var i = 0
+    while (list.isNotEmpty()) {
+        val value = Random().nextInt(num)
+        if (value in list) {
+            matrix[i / width, i % width] = value
+            list.remove(value)
+            i++
+        }
+    }
+    return matrix
+}
