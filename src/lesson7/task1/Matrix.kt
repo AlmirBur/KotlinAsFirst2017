@@ -22,7 +22,6 @@ interface Matrix<E> {
      */
     operator fun get(row: Int, column: Int): E
     operator fun get(cell: Cell): E
-    operator fun get(element: Int): Cell
 
     /**
      * Запись в ячейку.
@@ -30,7 +29,6 @@ interface Matrix<E> {
      */
     operator fun set(row: Int, column: Int, value: E)
     operator fun set(cell: Cell, value: E)
-    operator fun set(element: Int, cell: Cell)
 }
 
 /**
@@ -52,18 +50,11 @@ fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> =
 class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : Matrix<E> {
     private val elements = mutableMapOf<Cell, E>()
 
-    private var keys = mutableListOf<Cell>()
-
-    init {
-        for (i in 0 until height) for (j in 0 until width) elements[Cell(i, j)] = e
-        keys = MutableList(height * width) { Cell(0, 0) }
-    }
+    init { for (i in 0 until height) for (j in 0 until width) elements[Cell(i, j)] = e }
 
     override fun get(row: Int, column: Int): E = get(Cell(row, column))
 
     override fun get(cell: Cell): E = elements[cell] ?: throw IllegalArgumentException()
-
-    override fun get(element: Int): Cell = keys[element]
 
     override fun set(row: Int, column: Int, value: E) {
         if (row !in 0 until height || column !in 0 until width) throw IllegalArgumentException()
@@ -71,8 +62,6 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
     }
 
     override fun set(cell: Cell, value: E) = set(cell.row, cell.column, value)
-
-    override fun set(element: Int, cell: Cell) { keys[element] = cell }
 
     override fun equals(other: Any?) = if (other is Matrix<*> && height == other.height && width == other.width) {
         var result = true
