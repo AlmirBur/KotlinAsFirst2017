@@ -50,7 +50,7 @@ fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> =
 class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : Matrix<E> {
     private val elements = mutableMapOf<Cell, E>()
 
-    val keys = MutableList(this.height * this.width) { Cell(0, 0) }
+    private val keys = MutableList(this.height * this.width) { Cell(0, 0) }
 
     init { for (i in 0 until height) for (j in 0 until width) elements[Cell(i, j)] = e }
 
@@ -58,12 +58,16 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
 
     override fun get(cell: Cell): E = elements[cell] ?: throw IllegalArgumentException()
 
+    operator fun get(index: Int): Cell = keys[index]
+
     override fun set(row: Int, column: Int, value: E) {
         if (row !in 0 until height || column !in 0 until width) throw IllegalArgumentException()
         else elements[Cell(row, column)] = value
     }
 
     override fun set(cell: Cell, value: E) = set(cell.row, cell.column, value)
+
+    operator fun set(index: Int, element: Cell) { keys[index] = element }
 
     override fun equals(other: Any?) = if (other is Matrix<*> && height == other.height && width == other.width) {
         var result = true
