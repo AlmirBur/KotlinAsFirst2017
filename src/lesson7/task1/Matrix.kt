@@ -50,6 +50,8 @@ fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> =
 class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : Matrix<E> {
     private val elements = mutableMapOf<Cell, E>()
 
+    val keys = MutableList(this.height * this.width) { Cell(0, 0) }
+
     init { for (i in 0 until height) for (j in 0 until width) elements[Cell(i, j)] = e }
 
     override fun get(row: Int, column: Int): E = get(Cell(row, column))
