@@ -5,7 +5,6 @@ import lesson7.task1.Cell
 import lesson7.task1.Matrix
 import lesson7.task1.MatrixImpl
 import lesson7.task1.createMatrix
-import java.util.*
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
 
@@ -514,6 +513,7 @@ fun change(matrix: Matrix<Int>, moves: List<Char>): List<Int> {
     return trajectory
 }
 
+/**    Для проверки
 fun main(args: Array<String>) {
     val value = 100
     val height = Random().nextInt(8) + 3
@@ -554,3 +554,4 @@ fun createRandomMatrix(height: Int, width: Int): Matrix<Int> {
     }
     return matrix
 }
+*/
